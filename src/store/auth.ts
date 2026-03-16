@@ -1,32 +1,43 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { api } from "../lib/api";
 
-interface User {
-  id: string;
+export interface User {
+  user_id: string;
   username: string;
   avatar_url?: string;
   email?: string;
 }
 
 interface AuthState {
-  token: string | null;
   user: User | null;
-  setAuth: (token: string, user: User) => void;
-  logout: () => void;
+  isLoading: boolean;
   isAuthenticated: () => boolean;
+  checkSession: () => Promise<void>;
+  logout: () => Promise<void>;
 }
 
-export const useAuthStore = create<AuthState>()(
-  persist(
-    (set, get) => ({
-      token: null,
-      user: null,
-      setAuth: (token, user) => set({ token, user }),
-      logout: () => set({ token: null, user: null }),
-      isAuthenticated: () => !!get().token,
-    }),
-    {
-      name: "agent47-auth-storage",
+export const useAuthStore = create<AuthState>()((set, get) => ({
+  user: null,
+  isLoading: true,
+
+  isAuthenticated: () => get().user !== null,
+
+  checkSession: async () => {
+    try {
+      const { data: user } = await api.get<User>("/auth/me");
+      set({ user, isLoading: false });
+    } catch {
+      set({ user: null, isLoading: false });
     }
-  )
-);
+  },
+
+  logout: async () => {
+    try {
+      await api.post("/auth/logout");
+    } catch {
+      // Even if the API call fails, clear local state
+    }
+    set({ user: null });
+    window.location.href = "/";
+  },
+}));

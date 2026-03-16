@@ -1,89 +1,93 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useQuery, useMutation } from '@tanstack/react-query'
-import { api } from '@/lib/api'
-import { useAuthStore } from '@/store/auth'
-import { useState } from 'react'
-import {
-  GitBranch,
-  Loader2,
-  Check,
-  ArrowRight,
-  Search,
-} from 'lucide-react'
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { api } from "../../lib/api";
+import { useAuthStore } from "../../store/auth";
+import { useState } from "react";
+import { GitBranch, Loader2, Check, ArrowRight, Search } from "lucide-react";
 
 type AvailableRepo = {
-  name: string
-  full_name: string
-}
+  name: string;
+  full_name: string;
+};
 
-export const Route = createFileRoute('/_authenticated/onboarding')({
+export const Route = createFileRoute("/_authenticated/onboarding")({
   component: OnboardingPage,
-})
+});
 
 function OnboardingPage() {
-  const navigate = useNavigate()
-  const user = useAuthStore((s) => s.user)
-  const [selected, setSelected] = useState<Set<string>>(new Set())
-  const [searchQuery, setSearchQuery] = useState('')
+  const navigate = useNavigate();
+  const user = useAuthStore((s) => s.user);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [searchQuery, setSearchQuery] = useState("");
 
   const {
     data: repos,
     isLoading,
     error,
-  } = useQuery<AvailableRepo[]>({
-    queryKey: ['repos', 'available'],
+  } = useQuery<{ repos: AvailableRepo[] }>({
+    queryKey: ["repos", "available"],
     queryFn: async () => {
-      const { data } = await api.get<AvailableRepo[]>('/repos/available')
-      return data
+      const { data } = await api.get<{ repos: AvailableRepo[] }>("/repos/list");
+      return data;
     },
-  })
+  });
+
+  console.log("repos", repos);
 
   const trackMutation = useMutation({
     mutationFn: async (repoFullNames: string[]) => {
       // Track repos sequentially
       for (const repo_full_name of repoFullNames) {
-        await api.post('/repos/track', { repo_full_name })
+        await api.post(
+          "/repos/track",
+          { repo_full_name },
+          {
+            headers: {
+              "X-GitHub-Event": "check_run",
+            },
+          }
+        );
       }
     },
     onSuccess: () => {
-      navigate({ to: '/dashboard' } as any)
+      navigate({ to: "/dashboard" } as any);
     },
-  })
+  });
 
   const toggleRepo = (fullName: string) => {
     setSelected((prev) => {
-      const next = new Set(prev)
+      const next = new Set(prev);
       if (next.has(fullName)) {
-        next.delete(fullName)
+        next.delete(fullName);
       } else {
-        next.add(fullName)
+        next.add(fullName);
       }
-      return next
-    })
-  }
+      return next;
+    });
+  };
 
-  const filteredRepos = repos?.filter(
+  const filteredRepos = repos?.repos?.filter(
     (r) =>
       r.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      r.name.toLowerCase().includes(searchQuery.toLowerCase()),
-  )
+      r.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const handleSubmit = () => {
     if (selected.size > 0) {
-      trackMutation.mutate(Array.from(selected))
+      trackMutation.mutate(Array.from(selected));
     }
-  }
+  };
 
   return (
     <div className="mx-auto max-w-2xl py-4">
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-2xl font-bold tracking-tight text-slate-900">
-          Welcome{user?.username ? `, ${user.username}` : ''}
+          Welcome{user?.username ? `, ${user.username}` : ""}
         </h1>
         <p className="mt-2 text-sm leading-relaxed text-slate-500">
-          Select the repositories you'd like Agent47 to monitor. You can always
-          change this later from your dashboard.
+          Select the repositories you'd like Agent47 to monitor. You can always change this later
+          from your dashboard.
         </p>
       </div>
 
@@ -123,34 +127,27 @@ function OnboardingPage() {
           ) : (
             <ul className="m-0 list-none divide-y divide-slate-100 p-0">
               {filteredRepos.map((repo) => {
-                const isSelected = selected.has(repo.full_name)
+                const isSelected = selected.has(repo.full_name);
                 return (
                   <li key={repo.full_name}>
                     <button
                       onClick={() => toggleRepo(repo.full_name)}
                       className={`flex w-full cursor-pointer items-center gap-4 border-none bg-transparent px-4 py-3.5 text-left transition hover:bg-slate-50 ${
-                        isSelected ? 'bg-slate-50/50' : ''
+                        isSelected ? "bg-slate-50/50" : ""
                       }`}
                     >
                       {/* Checkbox */}
                       <div
                         className={`flex h-5 w-5 flex-shrink-0 items-center justify-center rounded border transition ${
-                          isSelected
-                            ? 'border-slate-900 bg-slate-900'
-                            : 'border-slate-300 bg-white'
+                          isSelected ? "border-slate-900 bg-slate-900" : "border-slate-300 bg-white"
                         }`}
                       >
-                        {isSelected && (
-                          <Check className="h-3 w-3 text-white" strokeWidth={3} />
-                        )}
+                        {isSelected && <Check className="h-3 w-3 text-white" strokeWidth={3} />}
                       </div>
 
                       {/* Icon */}
                       <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-slate-100">
-                        <GitBranch
-                          className="h-4 w-4 text-slate-500"
-                          strokeWidth={1.8}
-                        />
+                        <GitBranch className="h-4 w-4 text-slate-500" strokeWidth={1.8} />
                       </div>
 
                       {/* Info */}
@@ -158,13 +155,11 @@ function OnboardingPage() {
                         <p className="m-0 truncate text-sm font-medium text-slate-900">
                           {repo.name}
                         </p>
-                        <p className="m-0 truncate text-xs text-slate-400">
-                          {repo.full_name}
-                        </p>
+                        <p className="m-0 truncate text-xs text-slate-400">{repo.full_name}</p>
                       </div>
                     </button>
                   </li>
-                )
+                );
               })}
             </ul>
           )}
@@ -175,8 +170,8 @@ function OnboardingPage() {
       <div className="mt-6 flex items-center justify-between">
         <p className="text-sm text-slate-400">
           {selected.size > 0
-            ? `${selected.size} ${selected.size === 1 ? 'repository' : 'repositories'} selected`
-            : 'Select at least one repository'}
+            ? `${selected.size} ${selected.size === 1 ? "repository" : "repositories"} selected`
+            : "Select at least one repository"}
         </p>
         <button
           onClick={handleSubmit}
@@ -201,5 +196,5 @@ function OnboardingPage() {
         </div>
       )}
     </div>
-  )
+  );
 }

@@ -5,9 +5,7 @@ import {
   Link,
   useMatchRoute,
 } from '@tanstack/react-router'
-import { useQuery } from '@tanstack/react-query'
-import { api } from '@/lib/api'
-import { useAuthStore } from '@/store/auth'
+import { useAuthStore } from '../store/auth'
 import type { LucideIcon } from 'lucide-react'
 import {
   Bug,
@@ -21,16 +19,10 @@ import {
 } from 'lucide-react'
 import { useState } from 'react'
 
-type UserProfile = {
-  username: string
-  avatar_url: string
-  email: string
-}
-
 export const Route = createFileRoute('/_authenticated')({
   beforeLoad: () => {
-    const isAuthenticated = useAuthStore.getState().isAuthenticated()
-    if (!isAuthenticated) {
+    const { user, isLoading } = useAuthStore.getState()
+    if (!isLoading && !user) {
       throw redirect({ to: '/' })
     }
   },
@@ -54,16 +46,6 @@ function AuthenticatedLayout() {
   const matchRoute = useMatchRoute()
   const user = useAuthStore((s) => s.user)
   const logout = useAuthStore((s) => s.logout)
-
-  const { data: profile } = useQuery<UserProfile>({
-    queryKey: ['user', 'me'],
-    queryFn: async () => {
-      const { data } = await api.get<UserProfile>('/user/me')
-      return data
-    },
-  })
-
-  const avatarUrl = profile?.avatar_url
 
   // Determine current page for breadcrumbs
   const currentPage = sidebarLinks.find((link) =>
@@ -109,9 +91,9 @@ function AuthenticatedLayout() {
         {/* Bottom user section */}
         <div className="border-t border-slate-200 p-3">
           <div className="flex items-center gap-3 rounded-lg px-3 py-2">
-            {avatarUrl ? (
+            {user?.avatar_url ? (
               <img
-                src={avatarUrl}
+                src={user.avatar_url}
                 alt={user?.username ?? 'User'}
                 className="h-8 w-8 rounded-full"
               />
@@ -125,14 +107,11 @@ function AuthenticatedLayout() {
                 {user?.username ?? 'User'}
               </p>
               <p className="m-0 truncate text-xs text-slate-400">
-                {profile?.email ?? ''}
+                {user?.email ?? ''}
               </p>
             </div>
             <button
-              onClick={() => {
-                logout()
-                window.location.href = '/'
-              }}
+              onClick={() => logout()}
               className="cursor-pointer rounded-md p-1.5 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
               title="Sign out"
             >
@@ -175,9 +154,9 @@ function AuthenticatedLayout() {
 
           {/* Right: user avatar */}
           <div className="flex items-center gap-3">
-            {avatarUrl ? (
+            {user?.avatar_url ? (
               <img
-                src={avatarUrl}
+                src={user.avatar_url}
                 alt={user?.username ?? 'User'}
                 className="h-8 w-8 rounded-full"
               />

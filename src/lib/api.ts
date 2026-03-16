@@ -1,34 +1,23 @@
 import axios from "axios";
-import { useAuthStore } from "../store/auth";
 
-// Point this to your FastAPI backend
+const API_BASE = "http://localhost:8000";
+// const API_BASE = "https://b11d-102-90-97-165.ngrok-free.app";
+
 export const api = axios.create({
-  baseURL: "http://localhost:8000",
+  baseURL: API_BASE,
+  withCredentials: true, // sending the HttpOnly session_token cookie
   headers: {
     "Content-Type": "application/json",
+    "ngrok-skip-browser-warning": "true",
   },
 });
 
-// Intercept requests and add the Bearer token automatically
-api.interceptors.request.use(
-  (config) => {
-    // Grab the token directly from Zustand state
-    const token = useAuthStore.getState().token;
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
-
-// Optional: Global error handling (e.g., if token expires, force logout)
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      useAuthStore.getState().logout();
-      window.location.href = "/"; // Kick them back to login
+      // Session expired or revoked — redirect to login
+      // window.location.href = "/";
     }
     return Promise.reject(error);
   }
