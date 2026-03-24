@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { api } from "../lib/api";
+import type { BaseResponse } from "../types";
 
 export interface User {
   user_id: string;
@@ -24,8 +25,8 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
 
   checkSession: async () => {
     try {
-      const { data: user } = await api.get<User>("/auth/me");
-      set({ user, isLoading: false });
+      const { data } = await api.get<BaseResponse<User>>("/auth/me");
+      set({ user: data.data, isLoading: false });
     } catch {
       set({ user: null, isLoading: false });
     }
@@ -33,7 +34,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
 
   logout: async () => {
     try {
-      await api.post("/auth/logout");
+      await api.post<BaseResponse<any>>("/auth/logout");
     } catch {
       // Even if the API call fails, clear local state
     }

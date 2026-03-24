@@ -1,7 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../../lib/api";
+import type { BaseResponse } from "../../types";
 import { GitBranch, CheckCircle2, XCircle, Loader2, Plus, ArrowRight } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 
 type TrackedRepo = {
   id: number;
@@ -19,11 +21,11 @@ function DashboardPage() {
     data: repos,
     isLoading,
     error,
-  } = useQuery<{ repos: TrackedRepo[] }>({
+  } = useQuery<TrackedRepo[]>({
     queryKey: ["repos", "tracked"],
     queryFn: async () => {
-      const { data } = await api.get<{ repos: TrackedRepo[] }>("/repos/tracked");
-      return data;
+      const { data } = await api.get<BaseResponse<TrackedRepo[]>>("/repos/tracked");
+      return data.data;
     },
   });
 
@@ -38,7 +40,7 @@ function DashboardPage() {
           </p>
         </div>
         <a
-          href="/onboarding"
+          href="/add-repos"
           className="inline-flex items-center gap-2 rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-medium text-white no-underline transition hover:bg-slate-800"
         >
           <Plus className="h-4 w-4" />
@@ -61,7 +63,7 @@ function DashboardPage() {
       )}
 
       {/* Empty state */}
-      {repos && repos.repos.length === 0 && (
+      {repos && repos.length === 0 && (
         <div className="rounded-xl border border-slate-200 bg-white py-16 text-center">
           <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100">
             <GitBranch className="h-6 w-6 text-slate-400" strokeWidth={1.5} />
@@ -71,7 +73,7 @@ function DashboardPage() {
             Connect your first repository to get started.
           </p>
           <a
-            href="/onboarding"
+            href="/add-repos"
             className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-slate-900 no-underline hover:underline"
           >
             Add repositories
@@ -81,10 +83,12 @@ function DashboardPage() {
       )}
 
       {/* Repos grid */}
-      {repos && repos.repos.length > 0 && (
+      {repos && repos.length > 0 && (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {repos.repos.map((repo) => (
-            <div
+          {repos.map((repo) => (
+            <Link
+              to="/repos/$repoId"
+              params={{ repoId: repo.id.toString() }}
               key={repo.id}
               className="rounded-xl border border-slate-200 bg-white p-5 transition hover:border-slate-300"
             >
@@ -106,7 +110,7 @@ function DashboardPage() {
               </div>
               <h3 className="text-sm font-semibold text-slate-900">{repo.name}</h3>
               <p className="mt-0.5 truncate text-xs text-slate-400">{repo.full_name}</p>
-            </div>
+            </Link>
           ))}
         </div>
       )}

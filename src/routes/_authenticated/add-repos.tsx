@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { api } from "../../lib/api";
+import type { BaseResponse } from "../../types";
 import { useAuthStore } from "../../store/auth";
 import { useState } from "react";
 import { GitBranch, Loader2, Check, ArrowRight, Search } from "lucide-react";
@@ -10,7 +11,7 @@ type AvailableRepo = {
   full_name: string;
 };
 
-export const Route = createFileRoute("/_authenticated/onboarding")({
+export const Route = createFileRoute("/_authenticated/add-repos")({
   component: OnboardingPage,
 });
 
@@ -24,11 +25,11 @@ function OnboardingPage() {
     data: repos,
     isLoading,
     error,
-  } = useQuery<{ repos: AvailableRepo[] }>({
+  } = useQuery<AvailableRepo[]>({
     queryKey: ["repos", "available"],
     queryFn: async () => {
-      const { data } = await api.get<{ repos: AvailableRepo[] }>("/repos/list");
-      return data;
+      const { data } = await api.get<BaseResponse<AvailableRepo[]>>("/repos");
+      return data.data;
     },
   });
 
@@ -38,7 +39,7 @@ function OnboardingPage() {
     mutationFn: async (repoFullNames: string[]) => {
       // Track repos sequentially
       for (const repo_full_name of repoFullNames) {
-        await api.post(
+        await api.post<BaseResponse<any>>(
           "/repos/track",
           { repo_full_name },
           {
@@ -66,7 +67,7 @@ function OnboardingPage() {
     });
   };
 
-  const filteredRepos = repos?.repos?.filter(
+  const filteredRepos = repos?.filter(
     (r) =>
       r.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       r.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -83,7 +84,7 @@ function OnboardingPage() {
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-2xl font-bold tracking-tight text-slate-900">
-          Welcome{user?.username ? `, ${user.username}` : ""}
+          Welcome{user?.username ? `, ${user.username}` : ``}
         </h1>
         <p className="mt-2 text-sm leading-relaxed text-slate-500">
           Select the repositories you'd like Agent47 to monitor. You can always change this later
@@ -170,7 +171,7 @@ function OnboardingPage() {
       <div className="mt-6 flex items-center justify-between">
         <p className="text-sm text-slate-400">
           {selected.size > 0
-            ? `${selected.size} ${selected.size === 1 ? "repository" : "repositories"} selected`
+            ? `${selected.size} ${selected.size === 1 ? `repository` : `repositories`} selected`
             : "Select at least one repository"}
         </p>
         <button

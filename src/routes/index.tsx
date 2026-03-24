@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { api } from "../lib/api";
+import type { BaseResponse } from "../types";
 import { useAuthStore } from "../store/auth";
 import { Bug, GitBranch, Shield, Zap, Github, Loader2, ArrowRight, Check } from "lucide-react";
 
@@ -17,8 +18,8 @@ function LandingPage() {
     setIsLoggingIn(true);
     setLoginError(null);
     try {
-      const { data } = await api.get<{ url: string }>("/auth/login");
-      window.location.href = data.url;
+      const { data } = await api.get<BaseResponse<{ url: string }>>("/auth/login");
+      window.location.href = data.data.url;
     } catch {
       setLoginError("Failed to start login. Please try again.");
       setIsLoggingIn(false);
