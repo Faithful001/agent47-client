@@ -14,7 +14,7 @@ import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
-import { Route as AuthenticatedAddReposRouteImport } from './routes/_authenticated/add-repos'
+import { Route as AuthenticatedReposAddRouteImport } from './routes/_authenticated/repos/add'
 import { Route as AuthenticatedReposRepoIdRouteImport } from './routes/_authenticated/repos/$repoId'
 
 const AboutRoute = AboutRouteImport.update({
@@ -41,9 +41,9 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
-const AuthenticatedAddReposRoute = AuthenticatedAddReposRouteImport.update({
-  id: '/add-repos',
-  path: '/add-repos',
+const AuthenticatedReposAddRoute = AuthenticatedReposAddRouteImport.update({
+  id: '/repos/add',
+  path: '/repos/add',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedReposRepoIdRoute =
@@ -56,55 +56,55 @@ const AuthenticatedReposRepoIdRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/add-repos': typeof AuthenticatedAddReposRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/repos/$repoId': typeof AuthenticatedReposRepoIdRoute
+  '/repos/add': typeof AuthenticatedReposAddRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/add-repos': typeof AuthenticatedAddReposRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/repos/$repoId': typeof AuthenticatedReposRepoIdRoute
+  '/repos/add': typeof AuthenticatedReposAddRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/about': typeof AboutRoute
-  '/_authenticated/add-repos': typeof AuthenticatedAddReposRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/_authenticated/repos/$repoId': typeof AuthenticatedReposRepoIdRoute
+  '/_authenticated/repos/add': typeof AuthenticatedReposAddRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/about'
-    | '/add-repos'
     | '/dashboard'
     | '/auth/callback'
     | '/repos/$repoId'
+    | '/repos/add'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
-    | '/add-repos'
     | '/dashboard'
     | '/auth/callback'
     | '/repos/$repoId'
+    | '/repos/add'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/about'
-    | '/_authenticated/add-repos'
     | '/_authenticated/dashboard'
     | '/auth/callback'
     | '/_authenticated/repos/$repoId'
+    | '/_authenticated/repos/add'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -151,11 +151,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/add-repos': {
-      id: '/_authenticated/add-repos'
-      path: '/add-repos'
-      fullPath: '/add-repos'
-      preLoaderRoute: typeof AuthenticatedAddReposRouteImport
+    '/_authenticated/repos/add': {
+      id: '/_authenticated/repos/add'
+      path: '/repos/add'
+      fullPath: '/repos/add'
+      preLoaderRoute: typeof AuthenticatedReposAddRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/repos/$repoId': {
@@ -169,15 +169,15 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteChildren {
-  AuthenticatedAddReposRoute: typeof AuthenticatedAddReposRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedReposRepoIdRoute: typeof AuthenticatedReposRepoIdRoute
+  AuthenticatedReposAddRoute: typeof AuthenticatedReposAddRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
-  AuthenticatedAddReposRoute: AuthenticatedAddReposRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedReposRepoIdRoute: AuthenticatedReposRepoIdRoute,
+  AuthenticatedReposAddRoute: AuthenticatedReposAddRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
