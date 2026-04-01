@@ -39,13 +39,13 @@ function DashboardPage() {
             Monitor and manage your tracked repositories.
           </p>
         </div>
-        <a
-          href="/add-repos"
+        <Link
+          to="/repos/add"
           className="inline-flex items-center gap-2 rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-medium text-white no-underline transition hover:bg-slate-800"
         >
           <Plus className="h-4 w-4" />
           Add Repos
-        </a>
+        </Link>
       </div>
 
       {/* Loading */}

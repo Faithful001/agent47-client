@@ -5,6 +5,7 @@ import { TanStackDevtools } from '@tanstack/react-devtools'
 import { useEffect } from 'react'
 import { useAuthStore } from '../store/auth'
 import { Loader2 } from 'lucide-react'
+import { Toaster } from 'sonner'
 
 import '../styles.css'
 
@@ -41,6 +42,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <Outlet />
+      <Toaster position="bottom-right" richColors />
       {import.meta.env.DEV && (
         <TanStackDevtools
           config={{ position: 'bottom-right' }}
