@@ -1,9 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
-import { api } from "../lib/api";
-import type { BaseResponse } from "../types";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useAuthStore } from "../store/auth";
-import { Bug, GitBranch, Shield, Zap, Github, Loader2, ArrowRight, Check } from "lucide-react";
+import { Bug, GitBranch, Shield, Zap, ArrowRight, Check } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   component: LandingPage,
@@ -11,20 +8,6 @@ export const Route = createFileRoute("/")({
 
 function LandingPage() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated());
-  const [isLoggingIn, setIsLoggingIn] = useState(false);
-  const [loginError, setLoginError] = useState<string | null>(null);
-
-  const handleLogin = async () => {
-    setIsLoggingIn(true);
-    setLoginError(null);
-    try {
-      const { data } = await api.get<BaseResponse<{ url: string }>>("/auth/login");
-      window.location.href = data.data.url;
-    } catch {
-      setLoginError("Failed to start login. Please try again.");
-      setIsLoggingIn(false);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -45,18 +28,12 @@ function LandingPage() {
                 <ArrowRight className="h-4 w-4" />
               </a>
             ) : (
-              <button
-                onClick={handleLogin}
-                disabled={isLoggingIn}
-                className="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+              <Link
+                to="/login"
+                className="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800"
               >
-                {isLoggingIn ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Github className="h-4 w-4" />
-                )}
-                Sign in with GitHub
-              </button>
+                Get Started
+              </Link>
             )}
           </div>
         </div>
@@ -80,21 +57,15 @@ function LandingPage() {
               verified fixes — so your team can focus on what matters.
             </p>
             <div className="mt-10 flex flex-wrap items-center gap-4">
-              <button
-                onClick={handleLogin}
-                disabled={isLoggingIn}
-                className="inline-flex cursor-pointer items-center gap-2.5 rounded-lg bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+              <Link
+                to="/login"
+                className="inline-flex cursor-pointer items-center gap-2.5 rounded-lg bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
               >
-                {isLoggingIn ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Github className="h-4 w-4" />
-                )}
-                Login with GitHub
-              </button>
+                Get Started
+                <ArrowRight className="h-4 w-4" />
+              </Link>
               <span className="text-sm text-slate-400">Free for open-source projects</span>
             </div>
-            {loginError && <p className="mt-4 text-sm text-red-500">{loginError}</p>}
           </div>
         </div>
         {/* Subtle grid background */}
@@ -184,18 +155,13 @@ function LandingPage() {
           <p className="mx-auto mt-4 max-w-md text-sm text-slate-400">
             Connect your repositories and let Agent47 handle the rest.
           </p>
-          <button
-            onClick={handleLogin}
-            disabled={isLoggingIn}
-            className="mt-8 inline-flex cursor-pointer items-center gap-2 rounded-lg bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-60"
+          <Link
+            to="/login"
+            className="mt-8 inline-flex cursor-pointer items-center gap-2 rounded-lg bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition hover:bg-slate-100"
           >
-            {isLoggingIn ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Github className="h-4 w-4" />
-            )}
             Get Started
-          </button>
+            <ArrowRight className="h-4 w-4" />
+          </Link>
         </div>
       </section>
 
