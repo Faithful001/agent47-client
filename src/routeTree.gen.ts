@@ -14,9 +14,12 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
+import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
+import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedReposAddRouteImport } from './routes/_authenticated/repos/add'
 import { Route as AuthenticatedReposRepoIdRouteImport } from './routes/_authenticated/repos/$repoId'
+import { Route as AuthenticatedReposBuildsBuildIdRouteImport } from './routes/_authenticated/repos/builds/$buildId'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -42,6 +45,16 @@ const AuthCallbackRoute = AuthCallbackRouteImport.update({
   path: '/auth/callback',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -58,24 +71,36 @@ const AuthenticatedReposRepoIdRoute =
     path: '/repos/$repoId',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedReposBuildsBuildIdRoute =
+  AuthenticatedReposBuildsBuildIdRouteImport.update({
+    id: '/repos/builds/$buildId',
+    path: '/repos/builds/$buildId',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/login': typeof LoginRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/profile': typeof AuthenticatedProfileRoute
+  '/settings': typeof AuthenticatedSettingsRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/repos/$repoId': typeof AuthenticatedReposRepoIdRoute
   '/repos/add': typeof AuthenticatedReposAddRoute
+  '/repos/builds/$buildId': typeof AuthenticatedReposBuildsBuildIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/login': typeof LoginRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/profile': typeof AuthenticatedProfileRoute
+  '/settings': typeof AuthenticatedSettingsRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/repos/$repoId': typeof AuthenticatedReposRepoIdRoute
   '/repos/add': typeof AuthenticatedReposAddRoute
+  '/repos/builds/$buildId': typeof AuthenticatedReposBuildsBuildIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -84,9 +109,12 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/login': typeof LoginRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/profile': typeof AuthenticatedProfileRoute
+  '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/_authenticated/repos/$repoId': typeof AuthenticatedReposRepoIdRoute
   '/_authenticated/repos/add': typeof AuthenticatedReposAddRoute
+  '/_authenticated/repos/builds/$buildId': typeof AuthenticatedReposBuildsBuildIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -95,18 +123,24 @@ export interface FileRouteTypes {
     | '/about'
     | '/login'
     | '/dashboard'
+    | '/profile'
+    | '/settings'
     | '/auth/callback'
     | '/repos/$repoId'
     | '/repos/add'
+    | '/repos/builds/$buildId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
     | '/login'
     | '/dashboard'
+    | '/profile'
+    | '/settings'
     | '/auth/callback'
     | '/repos/$repoId'
     | '/repos/add'
+    | '/repos/builds/$buildId'
   id:
     | '__root__'
     | '/'
@@ -114,9 +148,12 @@ export interface FileRouteTypes {
     | '/about'
     | '/login'
     | '/_authenticated/dashboard'
+    | '/_authenticated/profile'
+    | '/_authenticated/settings'
     | '/auth/callback'
     | '/_authenticated/repos/$repoId'
     | '/_authenticated/repos/add'
+    | '/_authenticated/repos/builds/$buildId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -164,6 +201,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthCallbackRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/settings': {
+      id: '/_authenticated/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AuthenticatedSettingsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/profile': {
+      id: '/_authenticated/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof AuthenticatedProfileRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
@@ -185,19 +236,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedReposRepoIdRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/repos/builds/$buildId': {
+      id: '/_authenticated/repos/builds/$buildId'
+      path: '/repos/builds/$buildId'
+      fullPath: '/repos/builds/$buildId'
+      preLoaderRoute: typeof AuthenticatedReposBuildsBuildIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
   }
 }
 
 interface AuthenticatedRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
+  AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedReposRepoIdRoute: typeof AuthenticatedReposRepoIdRoute
   AuthenticatedReposAddRoute: typeof AuthenticatedReposAddRoute
+  AuthenticatedReposBuildsBuildIdRoute: typeof AuthenticatedReposBuildsBuildIdRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedProfileRoute: AuthenticatedProfileRoute,
+  AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedReposRepoIdRoute: AuthenticatedReposRepoIdRoute,
   AuthenticatedReposAddRoute: AuthenticatedReposAddRoute,
+  AuthenticatedReposBuildsBuildIdRoute: AuthenticatedReposBuildsBuildIdRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(

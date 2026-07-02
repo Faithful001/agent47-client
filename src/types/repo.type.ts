@@ -1,3 +1,5 @@
+export type BuildStatus = "success" | "failed" | "in_progress" | "pending";
+
 export type BuildItem = {
   user_id: string;
   branch: string;
@@ -8,6 +10,69 @@ export type BuildItem = {
   commit_title: string;
   commit_sha: string;
   created_at: string;
+  status?: BuildStatus;
+};
+
+export type DiffHunk = {
+  old_start: number;
+  old_count: number;
+  new_start: number;
+  new_count: number;
+  lines: DiffLine[];
+};
+
+export type DiffLine = {
+  type: "addition" | "deletion" | "context";
+  content: string;
+  old_line_number?: number;
+  new_line_number?: number;
+};
+
+export type FileDiff = {
+  filename: string;
+  status: "added" | "modified" | "removed" | "renamed";
+  additions: number;
+  deletions: number;
+  hunks: DiffHunk[];
+  old_filename?: string; // for renames
+};
+
+export type LogSection = {
+  phase: string; // "install" | "build" | "test" | etc.
+  lines: string[];
+  has_error: boolean;
+  duration_ms?: number;
+};
+
+export type IssueSeverity = "critical" | "warning" | "info";
+
+export type IdentifiedIssue = {
+  title: string;
+  description: string;
+  severity: IssueSeverity;
+  file?: string;
+  line?: number;
+};
+
+export type BuildDetail = {
+  id: string;
+  repo_id: string;
+  user_id: string;
+  commit_title: string;
+  commit_description: string;
+  commit_sha: string;
+  branch: string;
+  pusher: string;
+  pusher_avatar?: string;
+  created_at: string;
+  status: BuildStatus;
+  duration_ms?: number;
+  files_changed: FileDiff[];
+  log_sections: LogSection[];
+  fix_summary?: string; // markdown
+  identified_issues: IdentifiedIssue[];
+  total_additions: number;
+  total_deletions: number;
 };
 
 export type TrackedRepo = {

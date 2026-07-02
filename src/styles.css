@@ -101,3 +101,61 @@ button:disabled {
   cursor: not-allowed;
   opacity: 0.7;
 }
+
+/* Diff Viewer Styles */
+.diff-line {
+  display: flex;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+.diff-line-num {
+  user-select: none;
+  text-align: right;
+  padding-right: 0.5rem;
+  color: #94a3b8;
+  border-right: 1px solid #e2e8f0;
+  width: 3rem;
+}
+
+.diff-prefix {
+  user-select: none;
+  text-align: center;
+  width: 1.25rem;
+}
+
+.diff-line-add {
+  background-color: #f0fdf4;
+  color: #166534;
+}
+
+.diff-line-add .diff-line-num {
+  border-right-color: #bbf7d0;
+  background-color: #dcfce7;
+  color: #15803d;
+}
+
+.diff-line-del {
+  background-color: #fef2f2;
+  color: #991b1b;
+}
+
+.diff-line-del .diff-line-num {
+  border-right-color: #fecaca;
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+.diff-line-ctx {
+  background-color: #ffffff;
+  color: #334155;
+}
+
+.diff-hunk-header {
+  background-color: #eff6ff;
+  color: #2563eb;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  padding: 0.25rem 1rem;
+  border-bottom: 1px solid #dbeafe;
+  border-top: 1px solid #dbeafe;
+}
+

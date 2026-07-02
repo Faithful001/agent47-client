@@ -5,8 +5,20 @@ import { getErrorMessage } from "#/lib/utils/get-error-message";
 import type { BaseResponse } from "#/types";
 import type { TrackedRepo, UpdateRepoPayload } from "#/types/repo.type";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { User, Copy, RefreshCw, Folder, Loader2 } from "lucide-react";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import {
+  User,
+  Copy,
+  RefreshCw,
+  Folder,
+  Loader2,
+  GitCommit,
+  ChevronRight,
+  CheckCircle2,
+  XCircle,
+  Timer,
+  GitBranch,
+} from "lucide-react";
 import { useState } from "react";
 
 import { toast } from "sonner";
@@ -134,28 +146,103 @@ function RepoDetailsPage() {
 
           {activeTab === "deployments" && (
             <div className="space-y-4">
-              {repo?.builds?.map((build) => (
-                <div
-                  key={build.id}
-                  className="rounded-xl border border-slate-200 bg-white p-6 flex items-start justify-between"
-                >
-                  <div className="flex flex-col gap-y-4">
-                    <div className="">
-                      <p className="text-lg font-semibold">{build.commit_title}</p>
-                      <p className="text-slate-600 text-sm">{build.commit_description}</p>
+              {repo?.builds?.map((build) => {
+                // Determine a status (mock fallback if undefined)
+                const status: "success" | "failed" | "in_progress" | "pending" =
+                  build.status || (build.commit_title.includes("error") ? "failed" : "success");
+
+                const statusDetails = {
+                  success: {
+                    label: "Passed",
+                    icon: CheckCircle2,
+                    classes: "text-emerald-700 bg-emerald-50 border-emerald-100",
+                  },
+                  failed: {
+                    label: "Failed",
+                    icon: XCircle,
+                    classes: "text-red-700 bg-red-50 border-red-100",
+                  },
+                  in_progress: {
+                    label: "Building",
+                    icon: Loader2,
+                    classes: "text-blue-700 bg-blue-50 border-blue-100 animate-spin",
+                  },
+                  pending: {
+                    label: "Pending",
+                    icon: Timer,
+                    classes: "text-amber-700 bg-amber-50 border-amber-100",
+                  },
+                }[status];
+
+                const StatusIcon = statusDetails.icon;
+
+                return (
+                  <Link
+                    key={build.id}
+                    to="/repos/builds/$buildId"
+                    params={{ buildId: build.id }}
+                    className="group block rounded-xl border border-slate-200 bg-white p-5 no-underline transition hover:border-slate-300 hover:shadow-sm"
+                  >
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                      <div className="flex-1 min-w-0">
+                        {/* Title & Status badge */}
+                        <div className="flex flex-wrap items-center gap-2 mb-1.5">
+                          <span
+                            className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-semibold ${statusDetails.classes}`}
+                          >
+                            <StatusIcon className="h-3 w-3 shrink-0" />
+                            {statusDetails.label}
+                          </span>
+                          <span className="font-semibold text-slate-900 group-hover:text-slate-700 transition-colors">
+                            {build.commit_title}
+                          </span>
+                        </div>
+
+                        {build.commit_description && (
+                          <p className="text-slate-500 text-sm mb-3 line-clamp-2">
+                            {build.commit_description}
+                          </p>
+                        )}
+
+                        {/* Meta metadata row */}
+                        <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-slate-500">
+                          {/* Pusher */}
+                          <span className="flex items-center gap-1">
+                            <span className="rounded bg-slate-100 p-0.5">
+                              <User className="h-3.5 w-3.5 text-slate-600" />
+                            </span>
+                            {build.pusher}
+                          </span>
+
+                          {/* Branch */}
+                          {build.branch && (
+                            <span className="flex items-center gap-1 font-mono text-[11px] bg-slate-100 rounded px-1.5 py-0.5">
+                              <GitBranch className="h-3.5 w-3.5 text-slate-500 mr-0.5" />
+                              {build.branch}
+                            </span>
+                          )}
+
+                          {/* Commit SHA */}
+                          {build.commit_sha && (
+                            <span className="flex items-center gap-1 font-mono text-[11px] bg-slate-100 rounded px-1.5 py-0.5">
+                              <GitCommit className="h-3.5 w-3.5 text-slate-500 mr-0.5" />
+                              {build.commit_sha.slice(0, 7)}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Right side metadata + chevron */}
+                      <div className="flex items-center justify-between border-t border-slate-100 pt-3 sm:border-0 sm:pt-0 sm:flex-col sm:items-end sm:gap-2 shrink-0">
+                        <span className="text-slate-400 text-xs sm:text-right">
+                          {new Date(build.created_at).toLocaleString()}
+                        </span>
+                        <ChevronRight className="h-4 w-4 text-slate-300 group-hover:text-slate-400 transition-transform group-hover:translate-x-0.5 hidden sm:block" />
+                      </div>
                     </div>
-                    <span className="flex items-center gap-x-2">
-                      <span className="rounded-md bg-slate-200 p-1">
-                        <User className="h-4 w-4" />
-                      </span>
-                      <p className="text-slate-600 text-xs">{build.pusher}</p>
-                    </span>
-                  </div>
-                  <p className="text-slate-600 text-xs">
-                    {new Date(build.created_at).toLocaleString()}
-                  </p>
-                </div>
-              ))}
+                  </Link>
+                );
+              })}
               {!isLoading && (!repo?.builds || repo.builds.length === 0) && (
                 <p className="text-sm text-slate-500 py-4">No deployments found.</p>
               )}
