@@ -73,6 +73,8 @@ export type BuildDetail = {
   identified_issues: IdentifiedIssue[];
   total_additions: number;
   total_deletions: number;
+  pr_url?: string;
+  contract_status?: string;
 };
 
 export type TrackedRepo = {

@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "#/lib/api";
 import type { BaseResponse } from "#/types";
-import type { BuildDetail, BuildStatus, IssueSeverity } from "#/types/repo.type";
+import type { BuildDetail, BuildStatus, IssueSeverity, LogSection, IdentifiedIssue } from "#/types/repo.type";
 import {
   ArrowLeft,
   GitBranch,
@@ -19,6 +19,8 @@ import {
   AlertCircle,
   Info,
   Sparkles,
+  Github,
+  ExternalLink,
 } from "lucide-react";
 import { useState } from "react";
 import DiffViewer from "#/components/ui/diff-viewer";
@@ -444,33 +446,33 @@ const statusConfig: Record<
   success: {
     label: "Build Passed",
     icon: CheckCircle2,
-    bg: "bg-emerald-50",
-    text: "text-emerald-700",
-    border: "border-emerald-200",
+    bg: "bg-emerald-950/40",
+    text: "text-emerald-400",
+    border: "border-emerald-900/60",
     dot: "bg-emerald-500",
   },
   failed: {
     label: "Build Failed",
     icon: XCircle,
-    bg: "bg-red-50",
-    text: "text-red-700",
-    border: "border-red-200",
+    bg: "bg-red-950/40",
+    text: "text-red-400",
+    border: "border-red-900/60",
     dot: "bg-red-500",
   },
   in_progress: {
     label: "Building...",
     icon: Loader2,
-    bg: "bg-blue-50",
-    text: "text-blue-700",
-    border: "border-blue-200",
+    bg: "bg-blue-950/40",
+    text: "text-blue-400",
+    border: "border-blue-900/60",
     dot: "bg-blue-500",
   },
   pending: {
     label: "Pending",
     icon: Timer,
-    bg: "bg-amber-50",
-    text: "text-amber-700",
-    border: "border-amber-200",
+    bg: "bg-amber-950/40",
+    text: "text-amber-400",
+    border: "border-amber-900/60",
     dot: "bg-amber-500",
   },
 };
@@ -481,24 +483,24 @@ const severityConfig: Record<
 > = {
   critical: {
     icon: XCircle,
-    bg: "bg-red-50",
-    text: "text-red-700",
-    border: "border-red-200",
-    badge: "bg-red-100 text-red-700",
+    bg: "bg-red-950/40",
+    text: "text-red-400",
+    border: "border-red-900/60",
+    badge: "bg-red-950 border border-red-900 text-red-400 font-mono text-[9px] uppercase tracking-wide",
   },
   warning: {
     icon: AlertTriangle,
-    bg: "bg-amber-50",
-    text: "text-amber-700",
-    border: "border-amber-200",
-    badge: "bg-amber-100 text-amber-700",
+    bg: "bg-amber-950/40",
+    text: "text-amber-400",
+    border: "border-amber-900/60",
+    badge: "bg-amber-950 border border-amber-900 text-amber-400 font-mono text-[9px] uppercase tracking-wide",
   },
   info: {
     icon: Info,
-    bg: "bg-blue-50",
-    text: "text-blue-700",
-    border: "border-blue-200",
-    badge: "bg-blue-100 text-blue-700",
+    bg: "bg-blue-950/40",
+    text: "text-blue-400",
+    border: "border-blue-900/60",
+    badge: "bg-blue-950 border border-blue-900 text-blue-400 font-mono text-[9px] uppercase tracking-wide",
   },
 };
 
@@ -511,6 +513,38 @@ function normalizeStatus(status: string | undefined): BuildStatus {
   if (s === "failed" || s === "error" || s === "fail" || s === "failure") return "failed";
   if (s === "in_progress" || s === "building" || s === "running") return "in_progress";
   return "pending";
+}
+
+function parseIssuesFromLogs(logSections: LogSection[] | undefined): IdentifiedIssue[] {
+  if (!logSections) return [];
+  const parsed: IdentifiedIssue[] = [];
+  logSections.forEach((section) => {
+    if (!section.has_error) return;
+    section.lines.forEach((line) => {
+      // TypeScript error parsing: modules/rag/rag.controller.ts(5,41): error TS2552: Cannot find name 'sponse'. Did you mean 'Response'?
+      const tsMatch = line.match(/^([^\(]+)\((\d+),(\d+)\):\s*error\s+(\w+):\s*(.*)$/);
+      if (tsMatch) {
+        parsed.push({
+          title: `TypeScript Error ${tsMatch[4]}`,
+          description: tsMatch[5],
+          severity: "critical",
+          file: tsMatch[1].trim(),
+          line: parseInt(tsMatch[2]),
+        });
+        return;
+      }
+
+      // Fallback for execution errors/exceptions
+      if (/error|failed/i.test(line) && line.length > 10 && !/npm ERR/i.test(line)) {
+        parsed.push({
+          title: "Execution Error",
+          description: line.trim(),
+          severity: "critical",
+        });
+      }
+    });
+  });
+  return parsed;
 }
 
 function BuildDetailPage() {
@@ -545,7 +579,7 @@ function BuildDetailPage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-24">
-        <Loader2 className="h-5 w-5 animate-spin text-slate-400" />
+        <Loader2 className="h-5 w-5 animate-spin text-zinc-550" />
       </div>
     );
   }
@@ -553,7 +587,7 @@ function BuildDetailPage() {
   if (error && !build) {
     return (
       <div className="mx-auto max-w-5xl">
-        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-600">
+        <div className="rounded-xl border border-red-900 bg-red-950/40 p-4 text-xs font-mono text-red-450">
           Failed to load build details. Please try again.
         </div>
       </div>
@@ -564,17 +598,33 @@ function BuildDetailPage() {
 
   const normalizedStatus = normalizeStatus(build.status);
 
-  // Merge database fields with mock fields for rich visualization
+  // Parse issues from log sections if server returned null/empty
+  const finalIssues =
+    build.identified_issues && build.identified_issues.length > 0
+      ? build.identified_issues
+      : parseIssuesFromLogs(build.log_sections);
+
+  // Create a recommendation summary if none is available in build payload
+  let finalSummary = build.fix_summary;
+  if (!finalSummary && finalIssues.length > 0) {
+    finalSummary = `## Recommended Action\n\nResolve the following compilation issues detected in the logs:\n\n${finalIssues
+      .map(
+        (issue) =>
+          `### ${issue.title}\n- **File**: \`${issue.file}${issue.line ? `:${issue.line}` : ""}\`\n- **Details**: ${issue.description}`,
+      )
+      .join("\n\n")}`;
+  }
+
+  // Create detail view using real build payload values
   const mergedBuild: BuildDetail = {
-    ...MOCK_BUILD,
     ...build,
     status: normalizedStatus,
-    files_changed: build.files_changed || MOCK_BUILD.files_changed,
-    log_sections: build.log_sections || MOCK_BUILD.log_sections,
-    identified_issues: build.identified_issues || MOCK_BUILD.identified_issues,
-    fix_summary: build.fix_summary || MOCK_BUILD.fix_summary,
-    total_additions: build.total_additions ?? MOCK_BUILD.total_additions,
-    total_deletions: build.total_deletions ?? MOCK_BUILD.total_deletions,
+    files_changed: build.files_changed || [],
+    log_sections: build.log_sections || [],
+    identified_issues: finalIssues,
+    fix_summary: finalSummary || "No AI analysis summary generated for this build.",
+    total_additions: build.total_additions ?? 0,
+    total_deletions: build.total_deletions ?? 0,
   };
 
   const status = statusConfig[mergedBuild.status];
@@ -592,7 +642,7 @@ function BuildDetailPage() {
       <Link
         to="/repos/$repoId"
         params={{ repoId: mergedBuild.repo_id }}
-        className="mb-6 inline-flex items-center gap-1.5 text-sm text-slate-500 no-underline transition hover:text-slate-700"
+        className="mb-6 inline-flex items-center gap-1.5 text-xs font-mono text-zinc-400 no-underline transition hover:text-zinc-200"
       >
         <ArrowLeft className="h-3.5 w-3.5" />
         Back to deployments
@@ -600,36 +650,36 @@ function BuildDetailPage() {
 
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-xl font-bold tracking-tight text-slate-900 sm:text-2xl">
+        <h1 className="text-xl font-bold tracking-tight text-zinc-100 sm:text-2xl font-sans">
           {mergedBuild.commit_title}
         </h1>
         {mergedBuild.commit_description && (
-          <p className="mt-2 max-w-3xl text-sm leading-relaxed text-slate-500">
+          <p className="mt-2 max-w-3xl text-sm leading-relaxed text-zinc-400 font-sans">
             {mergedBuild.commit_description}
           </p>
         )}
 
         {/* Meta row */}
-        <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-slate-500">
+        <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-zinc-400">
           {/* Commit SHA */}
           <button
             onClick={() => copySha(mergedBuild.commit_sha)}
-            className="inline-flex items-center gap-1.5 rounded-md bg-slate-100 px-2 py-1 font-mono text-xs text-slate-600 transition hover:bg-slate-200"
+            className="inline-flex items-center gap-1.5 rounded-md bg-zinc-800 border border-zinc-700 px-2 py-1 font-mono text-xs text-zinc-300 transition hover:bg-zinc-700 hover:text-zinc-100"
             title={mergedBuild.commit_sha}
           >
             <GitCommit className="h-3.5 w-3.5" />
             {mergedBuild.commit_sha.slice(0, 7)}
             {shaCopied ? (
-              <Check className="h-3 w-3 text-emerald-500" />
+              <Check className="h-3 w-3 text-emerald-400" />
             ) : (
-              <Copy className="h-3 w-3 text-slate-400" />
+              <Copy className="h-3 w-3 text-zinc-500" />
             )}
           </button>
 
           {/* Branch */}
           <span className="inline-flex items-center gap-1.5">
             <GitBranch className="h-3.5 w-3.5" />
-            <span className="rounded-md bg-slate-100 px-2 py-0.5 font-mono text-xs">
+            <span className="rounded-md bg-zinc-800 border border-zinc-750 px-2 py-0.5 font-mono text-xs text-zinc-300">
               {mergedBuild.branch}
             </span>
           </span>
@@ -643,7 +693,7 @@ function BuildDetailPage() {
                 className="h-4 w-4 rounded-full"
               />
             ) : (
-              <User className="h-3.5 w-3.5" />
+              <User className="h-3.5 w-3.5 text-zinc-400" />
             )}
             {mergedBuild.pusher}
           </span>
@@ -652,7 +702,7 @@ function BuildDetailPage() {
           <span className="inline-flex items-center gap-1.5">
             <Clock className="h-3.5 w-3.5" />
             {relativeTime(mergedBuild.created_at)}
-            <span className="text-slate-400">
+            <span className="text-zinc-550 font-mono">
               ({new Date(mergedBuild.created_at).toLocaleString()})
             </span>
           </span>
@@ -669,42 +719,59 @@ function BuildDetailPage() {
 
       {/* Status banner */}
       <div
-        className={`mb-6 flex items-center gap-3 rounded-xl border px-5 py-3.5 ${status?.bg} ${status?.border}`}
+        className={`mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between rounded-xl border px-5 py-3.5 bg-zinc-900 border-zinc-800 ${status?.text}`}
       >
-        <StatusIcon
-          className={`h-5 w-5 ${status?.text} ${mergedBuild.status === "in_progress" ? "animate-spin" : ""}`}
-        />
-        <span className={`text-sm font-semibold ${status?.text}`}>{status?.label}</span>
-        {mergedBuild.status === "failed" && mergedBuild.identified_issues?.length > 0 && (
-          <span className="text-xs text-red-500">
-            — {mergedBuild.identified_issues.filter((i) => i.severity === "critical").length}{" "}
-            critical issue
-            {mergedBuild.identified_issues.filter((i) => i.severity === "critical").length !== 1
-              ? "s"
-              : ""}{" "}
-            found
-          </span>
+        <div className="flex items-center gap-3">
+          <StatusIcon
+            className={`h-5 w-5 ${status?.text} ${mergedBuild.status === "in_progress" ? "animate-spin" : ""}`}
+          />
+          <span className="text-sm font-semibold">{status?.label}</span>
+          {mergedBuild.status === "failed" && mergedBuild.identified_issues?.length > 0 && (
+            <span className="text-xs text-red-400 font-mono">
+              — {mergedBuild.identified_issues.filter((i) => i.severity === "critical").length}{" "}
+              critical issue
+              {mergedBuild.identified_issues.filter((i) => i.severity === "critical").length !== 1
+                ? "s"
+                : ""}{" "}
+              found
+            </span>
+          )}
+        </div>
+
+        {mergedBuild.pr_url && (
+          <a
+            href={mergedBuild.pr_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-zinc-800 border border-zinc-700 hover:bg-zinc-700 hover:border-zinc-600 px-3 py-1.5 text-xs font-mono text-zinc-100 font-semibold no-underline transition"
+          >
+            <Github className="h-3.5 w-3.5 text-zinc-200" />
+            View Fix Suggestions
+            <ExternalLink className="h-3 w-3 text-zinc-400" />
+          </a>
         )}
       </div>
 
       {/* Tabs */}
-      <div className="mb-6 flex space-x-1 border-b border-slate-200">
+      <div className="mb-6 flex space-x-1 border-b border-zinc-800">
         {tabs?.map((tab) => (
           <button
             key={tab?.id}
             onClick={() => setActiveTab(tab?.id)}
             className={`relative flex items-center gap-1.5 px-4 pb-3 pt-1 text-sm font-medium transition-colors ${
               activeTab === tab?.id
-                ? "border-b-2 border-slate-900 text-slate-900"
-                : "border-b-2 border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700"
+                ? "border-b-2 border-white text-zinc-100 font-semibold"
+                : "border-b-2 border-transparent text-zinc-400 hover:border-zinc-800 hover:text-zinc-200"
             }`}
           >
             {tab?.id === "summary" && <Sparkles className="h-3.5 w-3.5" />}
             {tab?.label}
             {tab?.count != null && (
               <span
-                className={`rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${
-                  activeTab === tab?.id ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-500"
+                className={`rounded-full border px-1.5 py-0.5 text-[10px] font-semibold font-mono ${
+                  activeTab === tab?.id 
+                    ? "bg-zinc-800 text-white border-zinc-700" 
+                    : "bg-zinc-800/40 text-zinc-450 border-zinc-800"
                 }`}
               >
                 {tab?.count}
@@ -730,7 +797,7 @@ function BuildDetailPage() {
           {/* Issues list */}
           {mergedBuild.identified_issues?.length > 0 && (
             <div className="space-y-3">
-              <h3 className="text-sm font-semibold text-slate-900">
+              <h3 className="text-sm font-semibold text-zinc-250 font-sans">
                 Identified Issues ({mergedBuild.identified_issues.length})
               </h3>
               {mergedBuild.identified_issues.map((issue, i) => {
@@ -742,16 +809,16 @@ function BuildDetailPage() {
                       <SevIcon className={`mt-0.5 h-4 w-4 shrink-0 ${sev?.text}`} />
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2">
-                          <h4 className={`text-sm font-semibold ${sev?.text}`}>{issue.title}</h4>
+                          <h4 className={`text-sm font-semibold ${sev?.text} font-sans`}>{issue.title}</h4>
                           <span
-                            className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${sev?.badge}`}
+                            className={`rounded-full px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider ${sev?.badge}`}
                           >
                             {issue.severity}
                           </span>
                         </div>
-                        <p className="mt-1 text-sm text-slate-600">{issue.description}</p>
+                        <p className="mt-1 text-xs text-zinc-300 leading-relaxed font-sans">{issue.description}</p>
                         {issue.file && (
-                          <p className="mt-2 font-mono text-xs text-slate-400">
+                          <p className="mt-2 font-mono text-xs text-zinc-500">
                             {issue.file}
                             {issue.line != null && `:${issue.line}`}
                           </p>
@@ -766,12 +833,12 @@ function BuildDetailPage() {
 
           {/* AI Summary */}
           {mergedBuild.fix_summary && (
-            <div className="rounded-xl border border-slate-200 bg-white">
-              <div className="flex items-center gap-2 border-b border-slate-200 px-5 py-3">
-                <Sparkles className="h-4 w-4 text-violet-500" />
-                <h3 className="text-sm font-semibold text-slate-900">Agent47 Analysis</h3>
+            <div className="rounded-xl border border-zinc-800 bg-zinc-900 overflow-hidden">
+              <div className="flex items-center gap-2 border-b border-zinc-800 px-5 py-3">
+                <Sparkles className="h-4 w-4 text-white" />
+                <h3 className="text-sm font-semibold text-zinc-150 font-sans">Agent47 Analysis</h3>
               </div>
-              <div className="prose prose-sm prose-slate max-w-none px-5 py-4">
+              <div className="px-5 py-4">
                 <MarkdownRenderer content={mergedBuild.fix_summary} />
               </div>
             </div>
@@ -804,7 +871,7 @@ function MarkdownRenderer({ content }: { content: string }) {
       elements.push(
         <pre
           key={key++}
-          className="overflow-x-auto rounded-lg bg-slate-950 p-4 font-mono text-xs text-slate-300"
+          className="overflow-x-auto rounded-lg bg-zinc-950 border border-zinc-800 p-4 font-mono text-xs text-zinc-300 my-3"
         >
           <code>{codeLines.join("\n")}</code>
         </pre>
@@ -815,7 +882,7 @@ function MarkdownRenderer({ content }: { content: string }) {
     // Heading
     if (line?.startsWith("### ")) {
       elements.push(
-        <h4 key={key++} className="mb-2 mt-5 text-sm font-semibold text-slate-900">
+        <h4 key={key++} className="mb-2 mt-5 text-sm font-bold text-zinc-100 font-sans">
           {renderInline(line?.slice(4))}
         </h4>
       );
@@ -824,7 +891,7 @@ function MarkdownRenderer({ content }: { content: string }) {
     }
     if (line.startsWith("## ")) {
       elements.push(
-        <h3 key={key++} className="mb-2 mt-6 text-base font-bold text-slate-900">
+        <h3 key={key++} className="mb-2 mt-6 text-base font-bold text-zinc-150 font-sans">
           {renderInline(line.slice(3))}
         </h3>
       );
@@ -847,10 +914,10 @@ function MarkdownRenderer({ content }: { content: string }) {
       elements.push(
         <Tag
           key={key++}
-          className={`my-2 space-y-1 pl-5 ${isOrdered ? "list-decimal" : "list-disc"}`}
+          className={`my-2 space-y-1.5 pl-5 ${isOrdered ? "list-decimal" : "list-disc"} text-zinc-400 text-xs font-sans`}
         >
           {listItems.map((item, j) => (
-            <li key={j} className="text-sm text-slate-600">
+            <li key={j}>
               {renderInline(item)}
             </li>
           ))}
@@ -867,7 +934,7 @@ function MarkdownRenderer({ content }: { content: string }) {
 
     // Paragraph
     elements.push(
-      <p key={key++} className="my-2 text-sm leading-relaxed text-slate-600">
+      <p key={key++} className="my-2 text-xs leading-relaxed text-zinc-400 font-sans">
         {renderInline(line)}
       </p>
     );
@@ -911,7 +978,7 @@ function renderInline(text: string): React.ReactNode {
       parts.push(
         <code
           key={partKey++}
-          className="rounded bg-slate-100 px-1 py-0.5 font-mono text-xs text-slate-700"
+          className="rounded bg-zinc-800 border border-zinc-750 px-1 py-0.5 font-mono text-xs text-zinc-200"
         >
           {remaining.slice(1, end)}
         </code>
@@ -924,7 +991,7 @@ function renderInline(text: string): React.ReactNode {
         break;
       }
       parts.push(
-        <strong key={partKey++} className="font-semibold text-slate-900">
+        <strong key={partKey++} className="font-semibold text-zinc-100">
           {remaining.slice(2, end)}
         </strong>
       );

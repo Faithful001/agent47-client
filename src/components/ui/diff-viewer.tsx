@@ -26,7 +26,7 @@ function HunkView({ hunk }: { hunk: DiffHunk }) {
   return (
     <div>
       {/* Hunk header */}
-      <div className="diff-hunk-header bg-blue-50 px-4 py-1 font-mono text-xs text-blue-600">
+      <div className="diff-hunk-header bg-zinc-800 border-zinc-800 px-4 py-1 font-mono text-[11px] text-cyan-400">
         @@ -{hunk.old_start},{hunk.old_count} +{hunk.new_start},{hunk.new_count} @@
       </div>
       {/* Lines */}
@@ -49,10 +49,10 @@ function DiffLineView({ line }: { line: DiffLine }) {
 
   return (
     <div className={`diff-line ${bgClass} flex font-mono text-xs leading-5`}>
-      <span className="diff-line-num inline-block w-12 select-none border-r border-slate-200 pr-2 text-right text-slate-400">
+      <span className="diff-line-num inline-block w-12 select-none border-r border-zinc-800 pr-2 text-right text-zinc-500">
         {line.old_line_number ?? ""}
       </span>
-      <span className="diff-line-num inline-block w-12 select-none border-r border-slate-200 pr-2 text-right text-slate-400">
+      <span className="diff-line-num inline-block w-12 select-none border-r border-zinc-800 pr-2 text-right text-zinc-500">
         {line.new_line_number ?? ""}
       </span>
       <span className="diff-prefix inline-block w-5 select-none text-center">{prefix}</span>
@@ -76,28 +76,28 @@ function FileHeader({
   return (
     <button
       onClick={onToggle}
-      className="flex w-full items-center gap-2 border-b border-slate-200 bg-slate-50 px-4 py-2.5 text-left text-sm transition hover:bg-slate-100"
+      className="flex w-full items-center gap-2 border-b border-zinc-800 bg-zinc-900 px-4 py-2 text-left text-xs transition hover:bg-zinc-850"
     >
       {isExpanded ? (
-        <ChevronDown className="h-3.5 w-3.5 shrink-0 text-slate-400" />
+        <ChevronDown className="h-3.5 w-3.5 shrink-0 text-zinc-500" />
       ) : (
-        <ChevronRight className="h-3.5 w-3.5 shrink-0 text-slate-400" />
+        <ChevronRight className="h-3.5 w-3.5 shrink-0 text-zinc-500" />
       )}
       <Icon className={`h-4 w-4 shrink-0 ${color}`} strokeWidth={1.8} />
-      <span className="flex-1 truncate font-mono text-xs text-slate-700">
+      <span className="flex-1 truncate font-mono text-xs text-zinc-300">
         {file.old_filename ? (
           <>
-            <span className="text-slate-400 line-through">{file.old_filename}</span>
-            <span className="mx-1.5 text-slate-400">→</span>
+            <span className="text-zinc-550 line-through">{file.old_filename}</span>
+            <span className="mx-1.5 text-zinc-500">→</span>
             {file.filename}
           </>
         ) : (
           file.filename
         )}
       </span>
-      <span className="flex items-center gap-2 text-xs">
-        {file.additions > 0 && <span className="font-medium text-emerald-600">+{file.additions}</span>}
-        {file.deletions > 0 && <span className="font-medium text-red-500">−{file.deletions}</span>}
+      <span className="flex items-center gap-2 text-xs font-mono">
+        {file.additions > 0 && <span className="font-semibold text-emerald-400">+{file.additions}</span>}
+        {file.deletions > 0 && <span className="font-semibold text-red-400">−{file.deletions}</span>}
       </span>
     </button>
   );
@@ -127,31 +127,31 @@ export default function DiffViewer({ files, totalAdditions, totalDeletions }: Di
   };
 
   return (
-    <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
+    <div className="overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900 shadow-md">
       {/* Stats bar */}
-      <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50 px-4 py-2.5">
-        <div className="flex items-center gap-3 text-xs text-slate-600">
+      <div className="flex items-center justify-between border-b border-zinc-800 bg-zinc-900/50 px-4 py-2">
+        <div className="flex items-center gap-3 text-xs text-zinc-400">
           <button
             onClick={() => setShowSidebar(!showSidebar)}
-            className="rounded-md border border-slate-200 bg-white px-2 py-1 text-xs font-medium text-slate-600 transition hover:bg-slate-50"
+            className="rounded-md border border-zinc-700 bg-zinc-800 px-2 py-1 text-[10px] font-mono text-zinc-300 transition hover:bg-zinc-700 hover:text-zinc-150"
           >
             {showSidebar ? "Hide" : "Show"} file tree
           </button>
-          <span className="font-medium">{files.length} file{files.length !== 1 ? "s" : ""} changed</span>
-          <span className="font-medium text-emerald-600">+{totalAdditions}</span>
-          <span className="font-medium text-red-500">−{totalDeletions}</span>
+          <span className="font-mono">{files.length} file{files.length !== 1 ? "s" : ""} changed</span>
+          <span className="font-mono text-emerald-400">+{totalAdditions}</span>
+          <span className="font-mono text-red-400">−{totalDeletions}</span>
         </div>
 
         <div className="flex gap-1.5">
           <button
             onClick={() => setExpandedFiles(new Set(files.map((_, i) => i)))}
-            className="rounded-md border border-slate-200 bg-white px-2 py-1 text-xs font-medium text-slate-600 transition hover:bg-slate-50"
+            className="rounded-md border border-zinc-700 bg-zinc-800 px-2 py-1 text-[10px] font-mono text-zinc-300 transition hover:bg-zinc-700 hover:text-zinc-150"
           >
             Expand all
           </button>
           <button
             onClick={() => setExpandedFiles(new Set())}
-            className="rounded-md border border-slate-200 bg-white px-2 py-1 text-xs font-medium text-slate-600 transition hover:bg-slate-50"
+            className="rounded-md border border-zinc-700 bg-zinc-800 px-2 py-1 text-[10px] font-mono text-zinc-300 transition hover:bg-zinc-700 hover:text-zinc-150"
           >
             Collapse all
           </button>
@@ -161,7 +161,7 @@ export default function DiffViewer({ files, totalAdditions, totalDeletions }: Di
       <div className="flex">
         {/* File tree sidebar */}
         {showSidebar && (
-          <div className="w-64 shrink-0 border-r border-slate-200 bg-slate-50/50">
+          <div className="w-64 shrink-0 border-r border-zinc-800 bg-zinc-950/40">
             <div className="p-2">
               {files.map((file, index) => {
                 const Icon = statusIcon[file.status];
@@ -178,20 +178,20 @@ export default function DiffViewer({ files, totalAdditions, totalDeletions }: Di
                     onClick={() => scrollToFile(index)}
                     className={`flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-left transition ${
                       isSelected
-                        ? "bg-slate-200/80 text-slate-900"
-                        : "text-slate-600 hover:bg-slate-100"
+                        ? "bg-zinc-850 text-cyan-400 border border-zinc-750"
+                        : "text-zinc-400 hover:bg-zinc-850"
                     }`}
                   >
                     <Icon className={`h-3.5 w-3.5 shrink-0 ${color}`} strokeWidth={1.8} />
-                    <div className="min-w-0 flex-1">
+                    <div className="min-w-0 flex-1 font-mono">
                       <div className="truncate text-xs font-medium">{name}</div>
                       {dir && (
-                        <div className="truncate text-[10px] text-slate-400">{dir}</div>
+                        <div className="truncate text-[10px] text-zinc-550">{dir}</div>
                       )}
                     </div>
-                    <span className="flex items-center gap-1 text-[10px]">
-                      {file.additions > 0 && <span className="text-emerald-600">+{file.additions}</span>}
-                      {file.deletions > 0 && <span className="text-red-500">−{file.deletions}</span>}
+                    <span className="flex items-center gap-1 text-[10px] font-mono">
+                      {file.additions > 0 && <span className="text-emerald-400">+{file.additions}</span>}
+                      {file.deletions > 0 && <span className="text-red-400">−{file.deletions}</span>}
                     </span>
                   </button>
                 );
@@ -210,12 +210,12 @@ export default function DiffViewer({ files, totalAdditions, totalDeletions }: Di
                 onToggle={() => toggleFile(index)}
               />
               {expandedFiles.has(index) && (
-                <div className="overflow-x-auto">
+                <div className="overflow-x-auto bg-zinc-950">
                   {file.hunks.map((hunk, hunkIndex) => (
                     <HunkView key={hunkIndex} hunk={hunk} />
                   ))}
                   {file.hunks.length === 0 && (
-                    <div className="py-6 text-center text-xs text-slate-400">
+                    <div className="py-6 text-center text-xs font-mono text-zinc-550">
                       Binary file or no visible changes
                     </div>
                   )}

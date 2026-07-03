@@ -53,22 +53,22 @@ export default function BuildLogViewer({ sections }: BuildLogViewerProps) {
     /error|ERR!|FAIL|failed|exception|panic|fatal/i.test(line) && !/\d+ error/.test(line);
 
   return (
-    <div className="overflow-hidden rounded-xl border border-slate-200 bg-slate-950">
+    <div className="overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950">
       {/* Toolbar */}
-      <div className="flex items-center gap-3 border-b border-slate-800 bg-slate-900 px-4 py-2.5">
+      <div className="flex items-center gap-3 border-b border-zinc-800 bg-zinc-900 px-4 py-2.5">
         <div className="relative flex-1">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-500" />
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-zinc-500" />
           <input
             type="text"
             placeholder="Search logs..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full rounded-md border border-slate-700 bg-slate-800 py-1.5 pl-9 pr-3 text-xs text-slate-300 placeholder-slate-500 focus:border-slate-600 focus:outline-none"
+            className="w-full rounded-md border border-zinc-700 bg-zinc-950 py-1.5 pl-9 pr-3 text-xs text-zinc-300 placeholder-zinc-650 focus:border-zinc-500 focus:outline-none font-mono"
           />
         </div>
         <button
           onClick={copyLogs}
-          className="flex items-center gap-1.5 rounded-md border border-slate-700 bg-slate-800 px-3 py-1.5 text-xs text-slate-400 transition hover:border-slate-600 hover:text-slate-300"
+          className="flex items-center gap-1.5 rounded-md border border-zinc-750 bg-zinc-800 px-3 py-1.5 text-xs text-zinc-400 transition hover:border-zinc-500 hover:text-zinc-200 font-mono"
         >
           {copied ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
           {copied ? "Copied" : "Copy"}
@@ -80,18 +80,18 @@ export default function BuildLogViewer({ sections }: BuildLogViewerProps) {
         {sections.map((section, sectionIndex) => {
           const isExpanded = expandedSections.has(sectionIndex);
           const filteredLines = searchQuery
-            ? section.lines.filter((l) => l.toLowerCase().includes(searchQuery.toLowerCase()))
-            : section.lines;
+             ? section.lines.filter((l) => l.toLowerCase().includes(searchQuery.toLowerCase()))
+             : section.lines;
 
           return (
-            <div key={sectionIndex} className="border-b border-slate-800 last:border-0">
+            <div key={sectionIndex} className="border-b border-zinc-800 last:border-0">
               {/* Section header */}
               <button
                 onClick={() => toggleSection(sectionIndex)}
                 className={`flex w-full items-center gap-2 px-4 py-2.5 text-left text-xs font-medium transition ${
                   section.has_error
                     ? "bg-red-950/40 text-red-400 hover:bg-red-950/60"
-                    : "bg-slate-900/50 text-slate-400 hover:bg-slate-800/50"
+                    : "bg-zinc-900/50 text-zinc-400 hover:bg-zinc-800/50"
                 }`}
               >
                 {isExpanded ? (
@@ -99,21 +99,21 @@ export default function BuildLogViewer({ sections }: BuildLogViewerProps) {
                 ) : (
                   <ChevronRight className="h-3.5 w-3.5 shrink-0" />
                 )}
-                <span className="font-semibold uppercase tracking-wider">{section.phase}</span>
+                <span className="font-semibold uppercase tracking-wider font-sans">{section.phase}</span>
                 {section.has_error && <AlertCircle className="h-3.5 w-3.5 text-red-400" />}
                 {section.duration_ms != null && (
-                  <span className="ml-auto text-slate-600">
+                  <span className="ml-auto text-zinc-500 font-mono">
                     {section.duration_ms < 1000
                       ? `${section.duration_ms}ms`
                       : `${(section.duration_ms / 1000).toFixed(1)}s`}
                   </span>
                 )}
-                <span className="text-slate-600">{section.lines.length} lines</span>
+                <span className="text-zinc-500 font-mono ml-2">{section.lines.length} lines</span>
               </button>
 
               {/* Section content */}
               {isExpanded && (
-                <div className="bg-slate-950 px-4 py-2 font-mono text-xs leading-5">
+                <div className="bg-zinc-950 px-4 py-2 font-mono text-xs leading-5">
                   {filteredLines.map((line, lineIndex) => {
                     const isError = isErrorLine(line);
                     const isFirstError = isError && !foundFirstError;
@@ -130,10 +130,10 @@ export default function BuildLogViewer({ sections }: BuildLogViewerProps) {
                             ? "border-red-500 bg-red-950/30 text-red-300"
                             : highlight
                               ? "border-amber-500 bg-amber-950/20 text-amber-200"
-                              : "border-transparent text-slate-400"
+                              : "border-transparent text-zinc-450"
                         }`}
                       >
-                        <span className="mr-4 inline-block w-8 select-none text-right text-slate-700">
+                        <span className="mr-4 inline-block w-8 select-none text-right text-zinc-650">
                           {lineIndex + 1}
                         </span>
                         {line}
@@ -141,7 +141,7 @@ export default function BuildLogViewer({ sections }: BuildLogViewerProps) {
                     );
                   })}
                   {filteredLines.length === 0 && searchQuery && (
-                    <div className="py-4 text-center text-slate-600">
+                    <div className="py-4 text-center text-zinc-550 font-mono">
                       No matching lines in this section
                     </div>
                   )}

@@ -113,23 +113,23 @@ function OnboardingPage() {
         <div className="mb-8">
           <button
             onClick={() => setConfiguringRepo(null)}
-            className="mb-6 flex items-center gap-2 text-sm text-slate-500 hover:text-slate-900 transition-colors cursor-pointer"
+            className="mb-6 flex items-center gap-2 text-xs font-mono text-zinc-400 hover:text-zinc-200 transition-colors cursor-pointer"
           >
             <ChevronRight className="h-4 w-4 rotate-180" />
             Back to repositories
           </button>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Configure Project</h1>
-          <p className="mt-2 text-sm leading-relaxed text-slate-500">
-            Importing <span className="font-semibold text-slate-900">{configuringRepo.name}</span>.
+          <h1 className="text-2xl font-bold tracking-tight text-zinc-100 font-sans">Configure Project</h1>
+          <p className="mt-2 text-sm leading-relaxed text-zinc-400 font-sans">
+            Importing <span className="font-semibold text-zinc-100">{configuringRepo.name}</span>.
             Configure your build and deployment settings.
           </p>
         </div>
 
-        <div className="space-y-6 rounded-xl border border-slate-200 bg-white p-6 md:p-8">
+        <div className="space-y-6 rounded-xl border border-zinc-800 bg-zinc-900 p-6 md:p-8">
           {/* Root Directory */}
           <div>
-            <label className="block text-sm font-medium text-slate-900 mb-1">Root Directory</label>
-            <p className="text-xs text-slate-500 mb-3">
+            <label className="block text-sm font-semibold text-zinc-200 mb-1 font-sans">Root Directory</label>
+            <p className="text-xs text-zinc-500 mb-3 font-sans">
               The directory within your project where your code is located.
             </p>
             <input
@@ -137,19 +137,19 @@ function OnboardingPage() {
               placeholder="./"
               value={rootDirectory}
               onChange={(e) => setRootDirectory(e.target.value)}
-              className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:bg-white focus:border-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-100"
+              className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-xs font-mono text-zinc-100 focus:border-white focus:outline-none"
             />
           </div>
 
-          <div className="h-px w-full bg-slate-100" />
+          <div className="h-px w-full bg-zinc-800" />
 
           {/* Build Settings */}
           <div className="space-y-4">
-            <h3 className="text-sm font-semibold text-slate-900">Build Settings</h3>
+            <h3 className="text-sm font-semibold text-zinc-200 font-sans">Build Settings</h3>
 
             <div className="grid gap-5 md:grid-cols-2">
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">
+                <label className="block text-xs font-semibold text-zinc-300 mb-1 font-sans">
                   Build Command
                 </label>
                 <input
@@ -157,12 +157,12 @@ function OnboardingPage() {
                   placeholder="npm run build"
                   value={buildCommand}
                   onChange={(e) => setBuildCommand(e.target.value)}
-                  className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:bg-white focus:border-slate-400 focus:outline-none"
+                  className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-xs font-mono text-zinc-100 focus:border-white focus:outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">
+                <label className="block text-xs font-semibold text-zinc-300 mb-1 font-sans">
                   Test Command
                 </label>
                 <input
@@ -170,12 +170,12 @@ function OnboardingPage() {
                   placeholder="npm test"
                   value={testCommand}
                   onChange={(e) => setTestCommand(e.target.value)}
-                  className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:bg-white focus:border-slate-400 focus:outline-none"
+                  className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-xs font-mono text-zinc-100 focus:border-white focus:outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">
+                <label className="block text-xs font-semibold text-zinc-300 mb-1 font-sans">
                   Install Command
                 </label>
                 <input
@@ -183,12 +183,12 @@ function OnboardingPage() {
                   placeholder="npm install"
                   value={installCommand}
                   onChange={(e) => setInstallCommand(e.target.value)}
-                  className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:bg-white focus:border-slate-400 focus:outline-none"
+                  className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-xs font-mono text-zinc-100 focus:border-white focus:outline-none"
                 />
               </div>
 
               <div className="md:col-span-2">
-                <label className="block text-xs font-medium text-slate-700 mb-1">
+                <label className="block text-xs font-semibold text-zinc-300 mb-1 font-sans">
                   Start Command
                 </label>
                 <input
@@ -196,17 +196,17 @@ function OnboardingPage() {
                   placeholder="npm start"
                   value={startCommand}
                   onChange={(e) => setStartCommand(e.target.value)}
-                  className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:bg-white focus:border-slate-400 focus:outline-none"
+                  className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-xs font-mono text-zinc-100 focus:border-white focus:outline-none"
                 />
               </div>
             </div>
           </div>
 
-          <div className="h-px w-full bg-slate-100" />
+          <div className="h-px w-full bg-zinc-800" />
 
           {/* Environment Variables */}
           <div className="space-y-4">
-            <h3 className="text-sm font-semibold text-slate-900">Environment Variables</h3>
+            <h3 className="text-sm font-semibold text-zinc-200 font-sans">Environment Variables</h3>
             <div className="space-y-3">
               {envVars.map((envVar, idx) => (
                 <div key={idx} className="flex gap-2 items-start">
@@ -216,7 +216,7 @@ function OnboardingPage() {
                       placeholder="KEY"
                       value={envVar.key}
                       onChange={(e) => updateEnvVar(idx, "key", e.target.value)}
-                      className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-mono focus:bg-white focus:border-slate-400 focus:outline-none"
+                      className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-xs font-mono text-zinc-100 focus:border-white focus:outline-none"
                     />
                   </div>
                   <div className="flex-1">
@@ -225,12 +225,12 @@ function OnboardingPage() {
                       placeholder="VALUE"
                       value={envVar.value}
                       onChange={(e) => updateEnvVar(idx, "value", e.target.value)}
-                      className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-mono focus:bg-white focus:border-slate-400 focus:outline-none"
+                      className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-xs font-mono text-zinc-100 focus:border-white focus:outline-none"
                     />
                   </div>
                   <button
                     onClick={() => removeEnvVar(idx)}
-                    className="flex h-9 w-9 flex-shrink-0 cursor-pointer items-center justify-center rounded-lg text-slate-400 hover:bg-red-50 hover:text-red-500 transition-colors"
+                    className="flex h-9 w-9 flex-shrink-0 cursor-pointer items-center justify-center rounded-lg text-zinc-500 hover:bg-red-950/40 hover:text-red-400 transition-colors"
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>
@@ -245,14 +245,14 @@ function OnboardingPage() {
           <button
             onClick={() => trackMutation.mutate()}
             disabled={trackMutation.isPending}
-            className="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-slate-900 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-40"
+            className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg bg-white hover:bg-zinc-200 text-zinc-950 px-4 py-2 text-xs font-semibold font-mono tracking-wide shadow-sm transition disabled:cursor-not-allowed disabled:opacity-40"
           >
             {trackMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Deploy"}
           </button>
         </div>
 
         {trackMutation.isError && (
-          <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-600">
+          <div className="mt-4 rounded-lg border border-red-900 bg-red-950/40 p-4 text-xs font-mono text-red-400">
             Failed to setup repository. Please try again.
           </div>
         )}
@@ -264,27 +264,27 @@ function OnboardingPage() {
     <div className="mx-auto max-w-3xl py-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900">
+        <h1 className="text-3xl font-bold tracking-tight text-zinc-100 font-sans">
           Let's build something new.
         </h1>
-        <p className="mt-2 text-base text-slate-500">
+        <p className="mt-2 text-base text-zinc-400 font-sans">
           To deploy a new Project, import an existing repository from your Git provider.
         </p>
       </div>
 
-      <div className="rounded-xl border border-slate-200 bg-white overflow-hidden shadow-sm">
-        <div className="p-4 border-b border-slate-100 flex gap-4 items-center">
-          <h2 className="font-semibold text-slate-900 whitespace-nowrap hidden sm:block">
+      <div className="rounded-xl border border-zinc-800 bg-zinc-900 overflow-hidden shadow-md">
+        <div className="p-4 border-b border-zinc-800 flex gap-4 items-center">
+          <h2 className="font-semibold text-zinc-100 whitespace-nowrap hidden sm:block font-sans">
             Import Git Repository
           </h2>
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
             <input
               type="text"
               placeholder="Search repositories..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full rounded-md border border-slate-200 bg-white py-2 pl-9 pr-3 text-sm text-slate-900 outline-none placeholder:text-slate-400 focus:border-slate-400 focus:ring-1 focus:ring-slate-400"
+              className="w-full rounded-md border border-zinc-700 bg-zinc-950 py-2 pl-9 pr-3 text-xs text-zinc-100 outline-none placeholder:text-zinc-550 focus:border-white font-mono"
             />
           </div>
         </div>
@@ -292,13 +292,13 @@ function OnboardingPage() {
         {/* Loading */}
         {isLoading && (
           <div className="flex items-center justify-center py-20">
-            <Loader2 className="h-6 w-6 animate-spin text-slate-400" />
+            <Loader2 className="h-6 w-6 animate-spin text-zinc-500" />
           </div>
         )}
 
         {/* Error */}
         {error && (
-          <div className="mx-4 my-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-600">
+          <div className="mx-4 my-4 rounded-lg border border-red-900 bg-red-950/40 p-4 text-xs font-mono text-red-400">
             Failed to load repositories. Please try again.
           </div>
         )}
@@ -308,22 +308,22 @@ function OnboardingPage() {
           <div className="max-h-[500px] overflow-y-auto">
             {filteredRepos.length === 0 ? (
               <div className="py-12 text-center">
-                <p className="text-sm text-slate-400">No repositories found.</p>
+                <p className="text-xs font-mono text-zinc-500">No repositories found.</p>
               </div>
             ) : (
-              <ul className="m-0 list-none divide-y divide-slate-100 p-0">
+              <ul className="m-0 list-none divide-y divide-zinc-800 p-0">
                 {filteredRepos.map((repo) => (
                   <li
                     key={repo.full_name}
-                    className="flex items-center justify-between px-4 py-4 hover:bg-slate-50 transition-colors"
+                    className="flex items-center justify-between px-4 py-4 hover:bg-zinc-850/50 transition-colors"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-md border border-slate-200 bg-white text-slate-600 shadow-sm">
+                      <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-md border border-zinc-750 bg-zinc-850 text-zinc-300">
                         <GitBranch className="h-4 w-4" strokeWidth={1.8} />
                       </div>
-                      <div className="font-medium text-slate-900 text-sm">
+                      <div className="font-medium text-zinc-200 text-sm font-sans">
                         {repo.name}
-                        <span className="block text-xs font-normal text-slate-500 mt-0.5">
+                        <span className="block text-xs font-normal text-zinc-500 font-mono mt-0.5">
                           {repo.full_name}
                         </span>
                       </div>
@@ -331,7 +331,7 @@ function OnboardingPage() {
 
                     <button
                       onClick={() => setConfiguringRepo(repo)}
-                      className="cursor-pointer rounded-md border border-slate-200 bg-white px-4 py-1.5 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-100"
+                      className="cursor-pointer rounded-lg border border-zinc-700 bg-zinc-800 px-4 py-1.5 text-xs font-semibold font-mono text-zinc-150 shadow-sm transition hover:bg-zinc-700 hover:text-zinc-100"
                     >
                       Import
                     </button>

@@ -33,30 +33,30 @@ const DeleteModal = ({
       <AlertDialog.Trigger asChild>
         <button
           disabled={isLoading}
-          className="rounded-full bg-red-500 px-6 py-2.5 text-sm font-semibold text-white hover:bg-red-600 transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center min-w-[100px]"
+          className="rounded-lg bg-red-650 hover:bg-red-550 px-4 py-2 text-xs font-semibold font-mono text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[100px] shadow-sm"
         >
-          {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : buttonText}
+          {isLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : buttonText}
         </button>
       </AlertDialog.Trigger>
       <AlertDialog.Portal>
-        <AlertDialog.Overlay className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm" />
-        <AlertDialog.Content className="fixed left-[50%] top-[50%] z-50 w-full max-w-md translate-x-[-50%] translate-y-[-50%] rounded-xl border bg-white p-6 shadow-xl focus:outline-none">
-          <AlertDialog.Title className="text-xl font-semibold text-slate-900">
+        <AlertDialog.Overlay className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm" />
+        <AlertDialog.Content className="fixed left-[50%] top-[50%] z-50 w-full max-w-md translate-x-[-50%] translate-y-[-50%] rounded-xl border border-zinc-800 bg-zinc-900 p-6 shadow-2xl focus:outline-none text-zinc-100">
+          <AlertDialog.Title className="text-lg font-bold font-sans">
             {title}
           </AlertDialog.Title>
-          <AlertDialog.Description className="mt-3 text-sm text-slate-600">
+          <AlertDialog.Description className="mt-3 text-xs font-sans text-zinc-400 leading-relaxed">
             {description}
           </AlertDialog.Description>
           <div className="mt-6 flex justify-end gap-3">
             <AlertDialog.Cancel asChild>
-              <button className="rounded-md bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-200 transition-colors">
+              <button className="rounded-lg border border-zinc-700 bg-zinc-800 px-4 py-2 text-xs font-semibold font-mono text-zinc-300 hover:bg-zinc-700 transition-colors">
                 Cancel
               </button>
             </AlertDialog.Cancel>
-            <AlertDialog.Action>
+            <AlertDialog.Action asChild>
               <button
                 onClick={onClick}
-                className="rounded-md bg-red-500 px-4 py-2 text-sm font-semibold text-white hover:bg-red-600 transition-colors shadow-sm"
+                className="rounded-lg bg-red-650 px-4 py-2 text-xs font-semibold font-mono text-white hover:bg-red-550 transition-colors shadow-sm"
               >
                 Delete
               </button>
