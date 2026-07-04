@@ -1,8 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { api } from "../../../lib/api";
-import type { BaseResponse } from "../../../types";
-// import { useAuthStore } from "../../../store/auth";
+import { api } from "../../../../lib/api";
+import type { BaseResponse } from "../../../../types";
 import { useState } from "react";
 import { GitBranch, Loader2, Search, ChevronRight, Trash2 } from "lucide-react";
 
@@ -11,13 +10,12 @@ type AvailableRepo = {
   full_name: string;
 };
 
-export const Route = createFileRoute("/_authenticated/repos/add")({
+export const Route = createFileRoute("/_authenticated/dashboard/repos/add")({
   component: OnboardingPage,
 });
 
 function OnboardingPage() {
   const navigate = useNavigate();
-  // const user = useAuthStore((s) => s.user);
 
   // Repo Selection State
   const [searchQuery, setSearchQuery] = useState("");

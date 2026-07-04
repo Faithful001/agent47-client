@@ -26,7 +26,7 @@ import { useState } from "react";
 import DiffViewer from "#/components/ui/diff-viewer";
 import BuildLogViewer from "#/components/ui/build-log-viewer";
 
-export const Route = createFileRoute("/_authenticated/repos/builds/$buildId")({
+export const Route = createFileRoute("/_authenticated/dashboard/repos/builds/$buildId")({
   component: BuildDetailPage,
 });
 
@@ -521,7 +521,7 @@ function parseIssuesFromLogs(logSections: LogSection[] | undefined): IdentifiedI
   logSections.forEach((section) => {
     if (!section.has_error) return;
     section.lines.forEach((line) => {
-      // TypeScript error parsing: modules/rag/rag.controller.ts(5,41): error TS2552: Cannot find name 'sponse'. Did you mean 'Response'?
+      // TypeScript error parsing
       const tsMatch = line.match(/^([^\(]+)\((\d+),(\d+)\):\s*error\s+(\w+):\s*(.*)$/);
       if (tsMatch) {
         parsed.push({
@@ -640,7 +640,7 @@ function BuildDetailPage() {
     <div className="mx-auto max-w-6xl pb-16">
       {/* Back navigation */}
       <Link
-        to="/repos/$repoId"
+        to="/dashboard/repos/$repoId"
         params={{ repoId: mergedBuild.repo_id }}
         className="mb-6 inline-flex items-center gap-1.5 text-xs font-mono text-zinc-400 no-underline transition hover:text-zinc-200"
       >
@@ -769,8 +769,8 @@ function BuildDetailPage() {
             {tab?.count != null && (
               <span
                 className={`rounded-full border px-1.5 py-0.5 text-[10px] font-semibold font-mono ${
-                  activeTab === tab?.id 
-                    ? "bg-zinc-800 text-white border-zinc-700" 
+                  activeTab === tab?.id
+                    ? "bg-zinc-800 text-white border-zinc-700"
                     : "bg-zinc-800/40 text-zinc-450 border-zinc-800"
                 }`}
               >
@@ -946,13 +946,11 @@ function MarkdownRenderer({ content }: { content: string }) {
 
 /** Render inline markdown: bold, code, links */
 function renderInline(text: string): React.ReactNode {
-  // Split by `code` and **bold**
   const parts: React.ReactNode[] = [];
   let remaining = text;
   let partKey = 0;
 
   while (remaining.length > 0) {
-    // Find the next special marker
     const codeIdx = remaining.indexOf("`");
     const boldIdx = remaining.indexOf("**");
 

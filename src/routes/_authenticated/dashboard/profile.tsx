@@ -16,7 +16,7 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "#/lib/api";
 import type { BaseResponse } from "#/types";
 
-export const Route = createFileRoute("/_authenticated/profile")({
+export const Route = createFileRoute("/_authenticated/dashboard/profile")({
   component: ProfilePage,
 });
 

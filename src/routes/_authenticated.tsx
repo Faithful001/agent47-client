@@ -5,9 +5,12 @@ import { Bug, LayoutDashboard, Settings, User, LogOut, ChevronRight, Menu, X } f
 import { useState, useEffect } from "react";
 
 export const Route = createFileRoute("/_authenticated")({
-  beforeLoad: () => {
-    const { user, isLoading } = useAuthStore.getState();
-    if (!isLoading && !user) {
+  beforeLoad: async () => {
+    const state = useAuthStore.getState();
+    if (state.isLoading) {
+      await state.checkSession();
+    }
+    if (!useAuthStore.getState().user) {
       throw redirect({ to: "/" });
     }
   },
@@ -22,8 +25,8 @@ type SidebarLink = {
 
 const sidebarLinks: SidebarLink[] = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { to: "/settings", label: "Settings", icon: Settings },
-  { to: "/profile", label: "Profile", icon: User },
+  { to: "/dashboard/settings", label: "Settings", icon: Settings },
+  { to: "/dashboard/profile", label: "Profile", icon: User },
 ];
 
 function AuthenticatedLayout() {
@@ -174,7 +177,7 @@ function AuthenticatedLayout() {
                 </div>
                 <div className="py-1 space-y-0.5">
                   <Link
-                    to="/profile"
+                    to="/dashboard/profile"
                     onClick={() => setDropdownOpen(false)}
                     className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-xs font-semibold text-zinc-300 hover:bg-zinc-850 hover:text-zinc-100 no-underline transition group animate-none"
                   >
@@ -182,7 +185,7 @@ function AuthenticatedLayout() {
                     Profile
                   </Link>
                   <Link
-                    to="/settings"
+                    to="/dashboard/settings"
                     onClick={() => setDropdownOpen(false)}
                     className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-xs font-semibold text-zinc-300 hover:bg-zinc-850 hover:text-zinc-100 no-underline transition group animate-none"
                   >

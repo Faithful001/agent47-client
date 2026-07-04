@@ -4,7 +4,7 @@ import { Sparkles, Key, Link as LinkIcon, Sliders, Check, Copy, Eye, EyeOff, Loa
 import { toast } from "sonner";
 import Button from "#/components/ui/buttons";
 
-export const Route = createFileRoute("/_authenticated/settings")({
+export const Route = createFileRoute("/_authenticated/dashboard/settings")({
   component: SettingsPage,
 });
 

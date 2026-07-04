@@ -14,12 +14,13 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
-import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
-import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
-import { Route as AuthenticatedReposAddRouteImport } from './routes/_authenticated/repos/add'
-import { Route as AuthenticatedReposRepoIdRouteImport } from './routes/_authenticated/repos/$repoId'
-import { Route as AuthenticatedReposBuildsBuildIdRouteImport } from './routes/_authenticated/repos/builds/$buildId'
+import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard/index'
+import { Route as AuthenticatedDashboardSettingsRouteImport } from './routes/_authenticated/dashboard/settings'
+import { Route as AuthenticatedDashboardProfileRouteImport } from './routes/_authenticated/dashboard/profile'
+import { Route as AuthenticatedDashboardReposAddRouteImport } from './routes/_authenticated/dashboard/repos/add'
+import { Route as AuthenticatedDashboardReposRepoIdRouteImport } from './routes/_authenticated/dashboard/repos/$repoId'
+import { Route as AuthenticatedDashboardReposBuildsBuildIdRouteImport } from './routes/_authenticated/dashboard/repos/builds/$buildId'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -45,62 +46,72 @@ const AuthCallbackRoute = AuthCallbackRouteImport.update({
   path: '/auth/callback',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
-const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
-const AuthenticatedReposAddRoute = AuthenticatedReposAddRouteImport.update({
-  id: '/repos/add',
-  path: '/repos/add',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
-const AuthenticatedReposRepoIdRoute =
-  AuthenticatedReposRepoIdRouteImport.update({
+const AuthenticatedDashboardIndexRoute =
+  AuthenticatedDashboardIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
+const AuthenticatedDashboardSettingsRoute =
+  AuthenticatedDashboardSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
+const AuthenticatedDashboardProfileRoute =
+  AuthenticatedDashboardProfileRouteImport.update({
+    id: '/profile',
+    path: '/profile',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
+const AuthenticatedDashboardReposAddRoute =
+  AuthenticatedDashboardReposAddRouteImport.update({
+    id: '/repos/add',
+    path: '/repos/add',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
+const AuthenticatedDashboardReposRepoIdRoute =
+  AuthenticatedDashboardReposRepoIdRouteImport.update({
     id: '/repos/$repoId',
     path: '/repos/$repoId',
-    getParentRoute: () => AuthenticatedRoute,
+    getParentRoute: () => AuthenticatedDashboardRoute,
   } as any)
-const AuthenticatedReposBuildsBuildIdRoute =
-  AuthenticatedReposBuildsBuildIdRouteImport.update({
+const AuthenticatedDashboardReposBuildsBuildIdRoute =
+  AuthenticatedDashboardReposBuildsBuildIdRouteImport.update({
     id: '/repos/builds/$buildId',
     path: '/repos/builds/$buildId',
-    getParentRoute: () => AuthenticatedRoute,
+    getParentRoute: () => AuthenticatedDashboardRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/login': typeof LoginRoute
-  '/dashboard': typeof AuthenticatedDashboardRoute
-  '/profile': typeof AuthenticatedProfileRoute
-  '/settings': typeof AuthenticatedSettingsRoute
+  '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/auth/callback': typeof AuthCallbackRoute
-  '/repos/$repoId': typeof AuthenticatedReposRepoIdRoute
-  '/repos/add': typeof AuthenticatedReposAddRoute
-  '/repos/builds/$buildId': typeof AuthenticatedReposBuildsBuildIdRoute
+  '/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
+  '/dashboard/settings': typeof AuthenticatedDashboardSettingsRoute
+  '/dashboard/': typeof AuthenticatedDashboardIndexRoute
+  '/dashboard/repos/$repoId': typeof AuthenticatedDashboardReposRepoIdRoute
+  '/dashboard/repos/add': typeof AuthenticatedDashboardReposAddRoute
+  '/dashboard/repos/builds/$buildId': typeof AuthenticatedDashboardReposBuildsBuildIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/login': typeof LoginRoute
-  '/dashboard': typeof AuthenticatedDashboardRoute
-  '/profile': typeof AuthenticatedProfileRoute
-  '/settings': typeof AuthenticatedSettingsRoute
   '/auth/callback': typeof AuthCallbackRoute
-  '/repos/$repoId': typeof AuthenticatedReposRepoIdRoute
-  '/repos/add': typeof AuthenticatedReposAddRoute
-  '/repos/builds/$buildId': typeof AuthenticatedReposBuildsBuildIdRoute
+  '/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
+  '/dashboard/settings': typeof AuthenticatedDashboardSettingsRoute
+  '/dashboard': typeof AuthenticatedDashboardIndexRoute
+  '/dashboard/repos/$repoId': typeof AuthenticatedDashboardReposRepoIdRoute
+  '/dashboard/repos/add': typeof AuthenticatedDashboardReposAddRoute
+  '/dashboard/repos/builds/$buildId': typeof AuthenticatedDashboardReposBuildsBuildIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -108,13 +119,14 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/about': typeof AboutRoute
   '/login': typeof LoginRoute
-  '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
-  '/_authenticated/profile': typeof AuthenticatedProfileRoute
-  '/_authenticated/settings': typeof AuthenticatedSettingsRoute
+  '/_authenticated/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/auth/callback': typeof AuthCallbackRoute
-  '/_authenticated/repos/$repoId': typeof AuthenticatedReposRepoIdRoute
-  '/_authenticated/repos/add': typeof AuthenticatedReposAddRoute
-  '/_authenticated/repos/builds/$buildId': typeof AuthenticatedReposBuildsBuildIdRoute
+  '/_authenticated/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
+  '/_authenticated/dashboard/settings': typeof AuthenticatedDashboardSettingsRoute
+  '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
+  '/_authenticated/dashboard/repos/$repoId': typeof AuthenticatedDashboardReposRepoIdRoute
+  '/_authenticated/dashboard/repos/add': typeof AuthenticatedDashboardReposAddRoute
+  '/_authenticated/dashboard/repos/builds/$buildId': typeof AuthenticatedDashboardReposBuildsBuildIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -123,24 +135,25 @@ export interface FileRouteTypes {
     | '/about'
     | '/login'
     | '/dashboard'
-    | '/profile'
-    | '/settings'
     | '/auth/callback'
-    | '/repos/$repoId'
-    | '/repos/add'
-    | '/repos/builds/$buildId'
+    | '/dashboard/profile'
+    | '/dashboard/settings'
+    | '/dashboard/'
+    | '/dashboard/repos/$repoId'
+    | '/dashboard/repos/add'
+    | '/dashboard/repos/builds/$buildId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
     | '/login'
-    | '/dashboard'
-    | '/profile'
-    | '/settings'
     | '/auth/callback'
-    | '/repos/$repoId'
-    | '/repos/add'
-    | '/repos/builds/$buildId'
+    | '/dashboard/profile'
+    | '/dashboard/settings'
+    | '/dashboard'
+    | '/dashboard/repos/$repoId'
+    | '/dashboard/repos/add'
+    | '/dashboard/repos/builds/$buildId'
   id:
     | '__root__'
     | '/'
@@ -148,12 +161,13 @@ export interface FileRouteTypes {
     | '/about'
     | '/login'
     | '/_authenticated/dashboard'
-    | '/_authenticated/profile'
-    | '/_authenticated/settings'
     | '/auth/callback'
-    | '/_authenticated/repos/$repoId'
-    | '/_authenticated/repos/add'
-    | '/_authenticated/repos/builds/$buildId'
+    | '/_authenticated/dashboard/profile'
+    | '/_authenticated/dashboard/settings'
+    | '/_authenticated/dashboard/'
+    | '/_authenticated/dashboard/repos/$repoId'
+    | '/_authenticated/dashboard/repos/add'
+    | '/_authenticated/dashboard/repos/builds/$buildId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -201,20 +215,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthCallbackRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/settings': {
-      id: '/_authenticated/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof AuthenticatedSettingsRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
-    '/_authenticated/profile': {
-      id: '/_authenticated/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof AuthenticatedProfileRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
@@ -222,46 +222,83 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/repos/add': {
-      id: '/_authenticated/repos/add'
+    '/_authenticated/dashboard/': {
+      id: '/_authenticated/dashboard/'
+      path: '/'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof AuthenticatedDashboardIndexRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
+    '/_authenticated/dashboard/settings': {
+      id: '/_authenticated/dashboard/settings'
+      path: '/settings'
+      fullPath: '/dashboard/settings'
+      preLoaderRoute: typeof AuthenticatedDashboardSettingsRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
+    '/_authenticated/dashboard/profile': {
+      id: '/_authenticated/dashboard/profile'
+      path: '/profile'
+      fullPath: '/dashboard/profile'
+      preLoaderRoute: typeof AuthenticatedDashboardProfileRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
+    '/_authenticated/dashboard/repos/add': {
+      id: '/_authenticated/dashboard/repos/add'
       path: '/repos/add'
-      fullPath: '/repos/add'
-      preLoaderRoute: typeof AuthenticatedReposAddRouteImport
-      parentRoute: typeof AuthenticatedRoute
+      fullPath: '/dashboard/repos/add'
+      preLoaderRoute: typeof AuthenticatedDashboardReposAddRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
     }
-    '/_authenticated/repos/$repoId': {
-      id: '/_authenticated/repos/$repoId'
+    '/_authenticated/dashboard/repos/$repoId': {
+      id: '/_authenticated/dashboard/repos/$repoId'
       path: '/repos/$repoId'
-      fullPath: '/repos/$repoId'
-      preLoaderRoute: typeof AuthenticatedReposRepoIdRouteImport
-      parentRoute: typeof AuthenticatedRoute
+      fullPath: '/dashboard/repos/$repoId'
+      preLoaderRoute: typeof AuthenticatedDashboardReposRepoIdRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
     }
-    '/_authenticated/repos/builds/$buildId': {
-      id: '/_authenticated/repos/builds/$buildId'
+    '/_authenticated/dashboard/repos/builds/$buildId': {
+      id: '/_authenticated/dashboard/repos/builds/$buildId'
       path: '/repos/builds/$buildId'
-      fullPath: '/repos/builds/$buildId'
-      preLoaderRoute: typeof AuthenticatedReposBuildsBuildIdRouteImport
-      parentRoute: typeof AuthenticatedRoute
+      fullPath: '/dashboard/repos/builds/$buildId'
+      preLoaderRoute: typeof AuthenticatedDashboardReposBuildsBuildIdRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
     }
   }
 }
 
+interface AuthenticatedDashboardRouteChildren {
+  AuthenticatedDashboardProfileRoute: typeof AuthenticatedDashboardProfileRoute
+  AuthenticatedDashboardSettingsRoute: typeof AuthenticatedDashboardSettingsRoute
+  AuthenticatedDashboardIndexRoute: typeof AuthenticatedDashboardIndexRoute
+  AuthenticatedDashboardReposRepoIdRoute: typeof AuthenticatedDashboardReposRepoIdRoute
+  AuthenticatedDashboardReposAddRoute: typeof AuthenticatedDashboardReposAddRoute
+  AuthenticatedDashboardReposBuildsBuildIdRoute: typeof AuthenticatedDashboardReposBuildsBuildIdRoute
+}
+
+const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
+  {
+    AuthenticatedDashboardProfileRoute: AuthenticatedDashboardProfileRoute,
+    AuthenticatedDashboardSettingsRoute: AuthenticatedDashboardSettingsRoute,
+    AuthenticatedDashboardIndexRoute: AuthenticatedDashboardIndexRoute,
+    AuthenticatedDashboardReposRepoIdRoute:
+      AuthenticatedDashboardReposRepoIdRoute,
+    AuthenticatedDashboardReposAddRoute: AuthenticatedDashboardReposAddRoute,
+    AuthenticatedDashboardReposBuildsBuildIdRoute:
+      AuthenticatedDashboardReposBuildsBuildIdRoute,
+  }
+
+const AuthenticatedDashboardRouteWithChildren =
+  AuthenticatedDashboardRoute._addFileChildren(
+    AuthenticatedDashboardRouteChildren,
+  )
+
 interface AuthenticatedRouteChildren {
-  AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
-  AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
-  AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
-  AuthenticatedReposRepoIdRoute: typeof AuthenticatedReposRepoIdRoute
-  AuthenticatedReposAddRoute: typeof AuthenticatedReposAddRoute
-  AuthenticatedReposBuildsBuildIdRoute: typeof AuthenticatedReposBuildsBuildIdRoute
+  AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRouteWithChildren
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
-  AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
-  AuthenticatedProfileRoute: AuthenticatedProfileRoute,
-  AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
-  AuthenticatedReposRepoIdRoute: AuthenticatedReposRepoIdRoute,
-  AuthenticatedReposAddRoute: AuthenticatedReposAddRoute,
-  AuthenticatedReposBuildsBuildIdRoute: AuthenticatedReposBuildsBuildIdRoute,
+  AuthenticatedDashboardRoute: AuthenticatedDashboardRouteWithChildren,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(

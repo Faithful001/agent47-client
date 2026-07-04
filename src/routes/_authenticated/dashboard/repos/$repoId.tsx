@@ -23,7 +23,7 @@ import { useState, useEffect, useRef } from "react";
 
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/_authenticated/repos/$repoId")({
+export const Route = createFileRoute("/_authenticated/dashboard/repos/$repoId")({
   component: RepoDetailsPage,
 });
 
@@ -76,7 +76,6 @@ function RepoDetailsPage() {
       setAllBuilds((prev) => {
         console.log("prev", prev);
         console.log("buildsData.items", buildsData.items);
-        // console.log("page", page);
         if (page === 1) {
           return buildsData.items;
         }
@@ -261,7 +260,7 @@ function RepoDetailsPage() {
                 return (
                   <Link
                     key={build.id}
-                    to="/repos/builds/$buildId"
+                    to="/dashboard/repos/builds/$buildId"
                     params={{ buildId: build.id }}
                     className="group block rounded-xl border border-zinc-800 bg-zinc-900 p-5 no-underline transition hover:border-zinc-700 hover:shadow-lg animate-none"
                   >
