@@ -41,7 +41,7 @@ function NavBar({ isAuthenticated }: { isAuthenticated: boolean }) {
               <Link
                 to="/login"
                 id="nav-get-started-cta"
-                className="inline-flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-semibold text-zinc-950 no-underline transition hover:bg-zinc-200"
+                className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-zinc-950 no-underline transition hover:bg-zinc-200"
               >
                 Get Started
               </Link>
@@ -71,7 +71,7 @@ function HeroSection({ isAuthenticated: _isAuthenticated }: { isAuthenticated: b
           <div className="fade-up mb-8 inline-flex items-center gap-2.5 rounded-full border border-zinc-800 bg-zinc-900/80 px-3.5 py-1.5 shadow-sm">
             <span className="badge-dot inline-block h-2 w-2 rounded-full bg-emerald-500" />
             <span className="text-xs font-medium text-zinc-400">
-              New · <span className="text-zinc-300">AI-powered code review</span>
+              <span className="text-zinc-300">Autonomous AI code reviews</span>
             </span>
           </div>
 
@@ -93,7 +93,7 @@ function HeroSection({ isAuthenticated: _isAuthenticated }: { isAuthenticated: b
             <Link
               to="/login"
               id="hero-get-started-cta"
-              className="inline-flex cursor-pointer items-center gap-2.5 rounded-lg bg-white px-5 py-3 text-sm font-semibold text-zinc-950 no-underline transition hover:bg-zinc-200 active:scale-[0.98]"
+              className="inline-flex cursor-pointer items-center gap-2.5 rounded-full bg-white px-5 py-3 text-sm font-semibold text-zinc-950 no-underline transition hover:bg-zinc-200 active:scale-[0.98]"
             >
               Get Started Free
               <ArrowRight className="h-4 w-4" />
@@ -298,7 +298,7 @@ function CTASection({ isAuthenticated }: { isAuthenticated: boolean }) {
                 <Link
                   to="/login"
                   id="cta-get-started-btn"
-                  className="inline-flex cursor-pointer items-center gap-2.5 rounded-lg bg-white px-6 py-3 text-sm font-semibold text-zinc-950 no-underline transition hover:bg-zinc-200 active:scale-[0.98]"
+                  className="inline-flex cursor-pointer items-center gap-2.5 rounded-full bg-white px-6 py-3 text-sm font-semibold text-zinc-950 no-underline transition hover:bg-zinc-200 active:scale-[0.98]"
                 >
                   Get Started Free
                   <ArrowRight className="h-4 w-4" />
