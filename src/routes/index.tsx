@@ -11,12 +11,13 @@ function NavBar({ isAuthenticated }: { isAuthenticated: boolean }) {
     <nav className="fixed top-0 left-0 right-0 z-50 border-b border-zinc-800/60 bg-zinc-950/80 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
         {/* Logo */}
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-7 w-7 items-center justify-center rounded-md bg-white">
-            <Bug className="h-4 w-4 text-zinc-950" strokeWidth={2.2} />
-          </div>
-          <span className="text-sm font-semibold tracking-tight text-zinc-100">Agent47</span>
-        </div>
+        <Link to="/" className="flex items-center no-underline">
+          <img
+            src="/agent47logo%20horizontal.png"
+            alt="Agent47 Logo"
+            className="h-8 w-auto object-contain"
+          />
+        </Link>
 
         {/* Right CTA */}
         <div className="flex items-center gap-3">

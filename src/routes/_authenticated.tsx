@@ -1,7 +1,7 @@
 import { createFileRoute, Outlet, redirect, Link, useMatchRoute } from "@tanstack/react-router";
 import { useAuthStore } from "../store/auth";
 import type { LucideIcon } from "lucide-react";
-import { Bug, LayoutDashboard, Settings, User, LogOut, ChevronRight, Menu, X } from "lucide-react";
+import { LayoutDashboard, Settings, User, LogOut, ChevronRight, Menu, X } from "lucide-react";
 import { useState, useEffect } from "react";
 
 export const Route = createFileRoute("/_authenticated")({
@@ -50,11 +50,14 @@ function AuthenticatedLayout() {
       {/* Desktop Sidebar */}
       <aside className="fixed h-screen hidden w-64 flex-shrink-0 border-r border-zinc-800 bg-zinc-950 lg:flex lg:flex-col">
         {/* Logo */}
-        <div className="flex h-16 items-center gap-2 border-b border-zinc-800 px-6">
-          <Bug className="h-5 w-5 text-white" strokeWidth={2} />
-          <span className="text-base font-semibold tracking-tight text-zinc-100 font-sans">
-            Agent47
-          </span>
+        <div className="flex h-16 items-center border-b border-zinc-800 px-6">
+          <Link to="/dashboard" className="flex items-center no-underline">
+            <img
+              src="/agent47logo%20horizontal.png"
+              alt="Agent47 Logo"
+              className="h-7 w-auto object-contain"
+            />
+          </Link>
         </div>
 
         {/* Nav links */}
@@ -220,11 +223,18 @@ function AuthenticatedLayout() {
           <aside
             className={`relative z-45 flex h-full w-64 flex-col border-r border-zinc-800 bg-zinc-950 transition-transform duration-300 ${mobileMenuOpen ? "translate-x-0" : "-translate-x-full"}`}
           >
-            <div className="flex h-16 items-center gap-2 border-b border-zinc-800 px-6">
-              <Bug className="h-5 w-5 text-white" strokeWidth={2} />
-              <span className="text-base font-semibold tracking-tight text-zinc-100 font-sans">
-                Agent47
-              </span>
+            <div className="flex h-16 items-center border-b border-zinc-800 px-6">
+              <Link
+                to="/dashboard"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center no-underline"
+              >
+                <img
+                  src="/agent47logo%20horizontal.png"
+                  alt="Agent47 Logo"
+                  className="h-7 w-auto object-contain"
+                />
+              </Link>
             </div>
             <nav className="flex-1 px-3 py-4">
               <ul className="m-0 list-none space-y-1 p-0">

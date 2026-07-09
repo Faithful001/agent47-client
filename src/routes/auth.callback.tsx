@@ -22,18 +22,22 @@ function AuthCallback() {
   }, [navigate])
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-white">
+    <div className="flex min-h-screen items-center justify-center bg-zinc-950 text-zinc-100">
       <div className="text-center">
-        <div className="mx-auto mb-6 flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100">
-          <Bug className="h-6 w-6 text-slate-700" strokeWidth={1.8} />
+        <div className="mx-auto mb-6 flex h-12 w-12 items-center justify-center overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950 shadow-inner">
+          <img
+            src="/agent47logo%20standalone.png"
+            alt="Agent47 Logo"
+            className="h-8 w-8 object-contain"
+          />
         </div>
         <div className="mb-4 flex items-center justify-center gap-2">
-          <Loader2 className="h-4 w-4 animate-spin text-slate-400" />
-          <span className="text-sm font-medium text-slate-600">
+          <Loader2 className="h-4 w-4 animate-spin text-zinc-400" />
+          <span className="text-sm font-medium text-zinc-300">
             Completing sign-in...
           </span>
         </div>
-        <p className="text-xs text-slate-400">
+        <p className="text-xs text-zinc-500">
           Redirecting to your dashboard
         </p>
       </div>
