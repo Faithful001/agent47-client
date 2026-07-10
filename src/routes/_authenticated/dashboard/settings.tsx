@@ -194,8 +194,45 @@ function SettingsPage() {
     },
   });
 
+  const validateKeyFormat = (name: string, key: string): string | null => {
+    const nameLower = name.toLowerCase();
+    const valStripped = key.trim();
+    if (!valStripped) return null;
+    
+    // Masked keys shouldn't trigger validation
+    if (valStripped.includes("...") || valStripped.includes("*")) {
+      return null;
+    }
+    
+    if (nameLower === "openrouter" && !valStripped.startsWith("sk-or-v1-")) {
+      return "Invalid OpenRouter key format. It should start with 'sk-or-v1-'.";
+    }
+    if (nameLower === "google" && !valStripped.startsWith("AIzaSy")) {
+      return "Invalid Google API key format. It should start with 'AIzaSy'.";
+    }
+    if (nameLower === "anthropic" && !valStripped.startsWith("sk-ant-")) {
+      return "Invalid Anthropic API key format. It should start with 'sk-ant-'.";
+    }
+    if (nameLower === "openai" && !(valStripped.startsWith("sk-proj-") || valStripped.startsWith("sk-"))) {
+      return "Invalid OpenAI API key format. It should start with 'sk-proj-' or 'sk-'.";
+    }
+    if (nameLower === "groq" && !valStripped.startsWith("gsk_")) {
+      return "Invalid Groq API key format. It should start with 'gsk_'.";
+    }
+    return null;
+  };
+
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    for (const [provider, value] of Object.entries(apiKeys)) {
+      const errorMsg = validateKeyFormat(provider, value);
+      if (errorMsg) {
+        toast.error(errorMsg);
+        return;
+      }
+    }
+
     await saveSettings({
       api_keys: apiKeys,
       active_provider: activeProvider,
