@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useEffect } from 'react'
-import { Bug, Loader2 } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 
 export const Route = createFileRoute('/auth/callback')({
   component: AuthCallback,
