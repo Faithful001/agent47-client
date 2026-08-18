@@ -322,37 +322,25 @@ function LandingFooter() {
       <div className="mx-auto max-w-6xl px-6">
         <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-center">
           {/* Brand */}
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-6 w-6 items-center justify-center rounded-md bg-zinc-800">
-              <Bug className="h-3.5 w-3.5 text-zinc-300" strokeWidth={2} />
-            </div>
-            <span className="text-sm font-semibold text-zinc-400">Agent47</span>
-          </div>
+          <img
+            src="/agent47logo%20horizontal.png"
+            alt="Agent47 Logo"
+            className="h-8 w-auto object-contain"
+          />
 
           {/* Links */}
           <div className="flex items-center gap-6 text-xs text-zinc-600">
             <a
-              href="https://github.com"
+              href="https://github.com/Faithful001/agent47"
               target="_blank"
               rel="noreferrer"
               className="no-underline transition hover:text-zinc-300"
             >
               GitHub
             </a>
-            <a
-              href="https://x.com"
-              target="_blank"
-              rel="noreferrer"
-              className="no-underline transition hover:text-zinc-300"
-            >
-              Twitter
-            </a>
-            <a href="#" className="no-underline transition hover:text-zinc-300">
-              Docs
-            </a>
-            <a href="#" className="no-underline transition hover:text-zinc-300">
+            <Link to="/privacy" className="no-underline transition hover:text-zinc-300">
               Privacy
-            </a>
+            </Link>
           </div>
 
           {/* Status */}
