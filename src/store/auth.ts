@@ -39,6 +39,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
     } catch {
       // Even if the API call fails, clear local state
     }
+    localStorage.removeItem("auth_token");
     set({ user: null });
     window.location.href = "/";
   },
