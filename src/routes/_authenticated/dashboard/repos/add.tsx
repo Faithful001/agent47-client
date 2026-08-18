@@ -38,7 +38,7 @@ function OnboardingPage() {
   } = useQuery<AvailableRepo[]>({
     queryKey: ["repos", "available"],
     queryFn: async () => {
-      const { data } = await api.get<BaseResponse<AvailableRepo[]>>("/repos");
+      const { data } = await api.get<BaseResponse<AvailableRepo[]>>("/repos/");
       return data.data;
     },
   });
@@ -116,7 +116,9 @@ function OnboardingPage() {
             <ChevronRight className="h-4 w-4 rotate-180" />
             Back to repositories
           </button>
-          <h1 className="text-2xl font-bold tracking-tight text-zinc-100 font-sans">Configure Project</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-zinc-100 font-sans">
+            Configure Project
+          </h1>
           <p className="mt-2 text-sm leading-relaxed text-zinc-400 font-sans">
             Importing <span className="font-semibold text-zinc-100">{configuringRepo.name}</span>.
             Configure your build and deployment settings.
@@ -126,7 +128,9 @@ function OnboardingPage() {
         <div className="space-y-6 rounded-xl border border-zinc-800 bg-zinc-900 p-6 md:p-8">
           {/* Root Directory */}
           <div>
-            <label className="block text-sm font-semibold text-zinc-200 mb-1 font-sans">Root Directory</label>
+            <label className="block text-sm font-semibold text-zinc-200 mb-1 font-sans">
+              Root Directory
+            </label>
             <p className="text-xs text-zinc-500 mb-3 font-sans">
               The directory within your project where your code is located.
             </p>
